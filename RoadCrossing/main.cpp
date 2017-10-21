@@ -3,32 +3,47 @@
 #include <iostream>
 #include <windows.h>
 #include <string>
-#include "Game.h"
 #include "Console.h"
 #include "Frame.h"
 #include "Car.h"
 #include "Truck.h"
 #include "Bird.h"
 #include "Dinosaur.h"
+#include "Game.h"
 #include <conio.h>
 #include <mutex>
 
 using namespace std;
 
-void SubThread() {
-	Obstacle *ob = new Car(BOARD_LEFT_EDGE, 50, RIGHT);
+//void SubThread() {
+//	Obstacle *ob = new Truck(BOARD_LEFT_EDGE, 50, RIGHT);
+//	COORD pos;
+//	while (true) {
+//		pos = GetCursorPosition();
+//		lock_guard<mutex> lock(theLock);
+//
+//		ob->Move();
+//		ob->Print();
+//		GotoXY(pos);
+//		Sleep(25);
+//	}
+//
+//	delete ob;
+//}
+
+Game game;
+
+void ThreadFunct() {
 	COORD pos;
 	while (true) {
-		pos = GetCursorPosition();
-		lock_guard<mutex> lock(theLock);
+		//pos = GetCursorPosition();
 
-		ob->Move();
-		ob->Print();
-		GotoXY(pos);
+		game.UpdatePosObstacle();
+		lock_guard<mutex> *lock = new lock_guard<mutex>(theLock);
+		game.PrintObstacle();
+		delete lock;
 		Sleep(25);
 	}
-
-	delete ob;
 }
 
 int main() {
@@ -72,48 +87,33 @@ int main() {
 	////SetConsoleOutputCP(oldcp);
 #pragma endregion
 
-	SetConsoleFontSize({ 7, 12 });
+	//ShowWindow(GetConsoleWindow(), SW_MAXIMIZE);
+
+	//SetConsoleFontSize({ 10, 18 });	
+
+	//CONSOLE_SCREEN_BUFFER_INFO csbi;
+	//GetConsoleScreenBufferInfo(ConsoleHanlde, &csbi);
+	//cout << csbi.srWindow.Bottom;
+
 
 	FixConsoleWindow();
 	DrawBoard();
 
+	thread t(ThreadFunct);
 
-	thread t1(SubThread);
-	
-	char temp;
-	People people(50, 20);
-	COORD pos = GetCursorPosition();
-	{
-		lock_guard<mutex> lock(theLock);
-		people.Print();
-	}
-	GotoXY(pos);
-
+	game.PrintPeople();
 	while (true) {
-		temp = _getch();
-		char ch = toupper(temp);
-
-		if (ch == 'A') {
-			people.Left(0);
-		}
-		else if (ch == 'D') {
-			people.Right(0);
-		}
-		else if (ch == 'S') {
-			people.Down(0);
-		}
-		else if (ch == 'W') {
-			people.Up(0);
-		}
 		
+		char ch = toupper(_getch());
+		game.UpdatePosPeople(ch);
 		lock_guard<mutex> lock(theLock);
-		people.Print();
+		game.PrintPeople();
 	}
 
 
 
 
-	cin.get();
+	_getch();
 	return 0;
 }
 

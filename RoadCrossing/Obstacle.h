@@ -12,8 +12,11 @@ enum Direction {
 	LEFT, RIGHT
 };
 
+class Lane;
+
 class Obstacle
 {
+	friend class Lane;
 private:
 	int mX, mY;
 protected:
@@ -27,8 +30,11 @@ public:
 	void Tell();
 	virtual const Figure& GetFigure() = 0;
 	virtual const char* GetSoundFileName() = 0;
+	int Width();
+	int Height();
 	void EraseOldPos();
 	void Print();
+	virtual Obstacle * Clone(int, int) = 0;
 };
 
 #endif // !_OBSTACLE_H

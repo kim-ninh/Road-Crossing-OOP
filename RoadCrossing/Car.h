@@ -12,9 +12,10 @@ private:
 public:
 	Car();
 	Car(Direction);
-	Car(int, int, Direction theDirec = LEFT);
+	Car(int, int, Direction);
 	const Figure& GetFigure();
 	const char * GetSoundFileName();
+	Obstacle * Clone(int, int);
 };
 
 

@@ -1,14 +1,14 @@
 ﻿#pragma once
 #include "Console.h"
 
-void FixConsoleWindow()
+void FixConsoleWindow(int width,int height)
 {
 	// Cố định cửa sổ console, ngăn người dùng thay đổi kích thước và làm mờ nút Maximize
 	HWND consoleWindow = GetConsoleWindow();
 	LONG style = GetWindowLong(consoleWindow, GWL_STYLE);
 	style = style & ~(WS_MAXIMIZEBOX) & ~(WS_THICKFRAME);
 	SetWindowLong(consoleWindow, GWL_STYLE, style);
-
+	
 	// Ẩn con trỏ của màn hình Console
 	CONSOLE_CURSOR_INFO info;
 	HANDLE ConsoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -17,7 +17,8 @@ void FixConsoleWindow()
 	SetConsoleCursorInfo(ConsoleHandle, &info);
 
 	// Cố định kích thước buffer của cửa sổ Console với một Size xác định
-	COORD ConsoleBufferSize = { CONSOLE_MAX_WIDTH, CONSOLE_MAX_HEIGHT };
+	/*COORD ConsoleBufferSize = { CONSOLE_MAX_WIDTH, CONSOLE_MAX_HEIGHT };*/
+	COORD ConsoleBufferSize = { width, height };
 	SetConsoleScreenBufferSize(ConsoleHandle, ConsoleBufferSize);
 
 	// Cố dịnh kích thước cửa sổ Console với một Size xác định

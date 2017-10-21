@@ -13,8 +13,10 @@ public:
 	Dinosaur();
 	Dinosaur(Direction);
 	Dinosaur(int, int);
+	Dinosaur(int, int, Direction);
 	const Figure& GetFigure();
 	const char * GetSoundFileName();
+	Obstacle * Clone(int, int);
 };
 
 

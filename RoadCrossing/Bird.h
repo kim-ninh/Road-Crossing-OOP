@@ -13,8 +13,10 @@ public:
 	Bird();
 	Bird(Direction);
 	Bird(int, int);
+	Bird(int, int, Direction);
 	const Figure& GetFigure();
 	const char * GetSoundFileName();
+	Obstacle * Clone(int, int);
 };
 
 

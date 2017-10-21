@@ -7,13 +7,22 @@
 #include <Windows.h>
 #include "People.h"
 #include "Lane.h"
+#include <ctime>
+#include "Car.h"
+#include "Truck.h"
+#include "Bird.h"
+#include "Dinosaur.h"
 using namespace std;
+
+
+#define MAXIMUM 8		// maximum number of stacles per lane
+#define MINIMUM	6		// minimum number of stacles per lane
 
 class Game
 {
 private:
 	vector<Lane> lane;
-	People *pPeople;
+	People people;
 public:
 	Game();
 	void DrawGame();
@@ -26,9 +35,10 @@ public:
 	void SaveGame();
 	void PauseGame(HANDLE);
 	void ResumeGame(HANDLE);
-	void UpdatePosPeople(char);
-	void UpdatePosVehicle();
-	void UpdatePosAnimal();
+	void UpdatePosPeople(char MOVING);
+	void UpdatePosObstacle();
+	void PrintObstacle();
+	void PrintPeople();
 };
 
 

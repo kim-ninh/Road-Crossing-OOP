@@ -17,13 +17,10 @@
 //	PlaySound(sSoundFile, NULL, SND_FILENAME);
 //}
 
-Animal::Animal()
-{
-
-}
+Animal::Animal() {}
 
 Animal::Animal(Direction theDirec) : Obstacle(theDirec) {}
 
-Animal::Animal(int, int)
-{
-}
+Animal::Animal(int x, int y) : Obstacle(x, y) {}
+
+Animal::Animal(int x, int y, Direction theDirec) : Obstacle(x, y, theDirec) {}

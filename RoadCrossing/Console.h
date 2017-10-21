@@ -5,7 +5,7 @@
 #include <Windows.h>
 #include <cstdio>
 
-#define CONSOLE_MAX_HEIGHT 80
+#define CONSOLE_MAX_HEIGHT 60
 #define CONSOLE_MAX_WIDTH 200
 
 #define WIDTH_OFFSET 20
@@ -17,11 +17,11 @@
 #define BOARD_BOTTOM_EDGE (CONSOLE_MAX_HEIGHT - HEIGHT_OFFSET - 1)		// Cạnh dưới (y)
 
 #define BOARD_GAME_TOP BOARD_TOP_EDGE
-#define BOARD_GAME_BOTTOM (BOARD_TOP_EDGE - 10)
+#define BOARD_GAME_BOTTOM (BOARD_BOTTOM_EDGE - 0)
 #define BOARD_GAME_LEFT BOARD_LEFT_EDGE
-#define BOARD_GAME_RIGHT (BOARD_RIGHT_EDGE - 10)
+#define BOARD_GAME_RIGHT (BOARD_RIGHT_EDGE - 0)
 
-void FixConsoleWindow();
+void FixConsoleWindow(int width = CONSOLE_MAX_WIDTH, int height = CONSOLE_MAX_HEIGHT);
 BOOL SetConsoleFontSize(COORD dwFontSize);
 void DrawBoard();
 void GotoXY(int, int);

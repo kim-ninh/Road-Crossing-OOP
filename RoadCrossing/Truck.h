@@ -13,8 +13,10 @@ public:
 	Truck();
 	Truck(Direction);
 	Truck(int, int);
+	Truck(int, int, Direction);
 	const Figure& GetFigure();
 	const char * GetSoundFileName();
+	Obstacle * Clone(int, int);
 };
 
 

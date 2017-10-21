@@ -23,10 +23,12 @@ private:
 	vector<string> str;
 	int width, height;
 public:
+	Figure();
 	Figure(const char *file_name);
 	string Get(char *file_name);
 	void Print(COORD);
 	void Print(int, int);
+	void PrintIntro(COORD);
 	int Width();
 	int Height();
 };

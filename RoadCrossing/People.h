@@ -13,10 +13,11 @@ private:
 	vector<COORD> oldPos;
 public:
 	People(int x = 0, int y = 0);
-	void Up(int);
-	void Left(int);
-	void Right(int);
-	void Down(int);
+	void Up();
+	void Left();
+	void Right();
+	void Down();
+	void Move(char);
 	bool IsImpact(const Obstacle*&);
 	bool IsFinish();
 	bool IsDead();

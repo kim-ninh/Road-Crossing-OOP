@@ -26,3 +26,8 @@ const char * Car::GetSoundFileName()
 {
 	return sSoundFileName;
 }
+
+Obstacle * Car::Clone(int x, int y)
+{
+	return new Car(x, y, direc);
+}

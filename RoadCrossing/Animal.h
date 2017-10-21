@@ -10,6 +10,7 @@ public:
 	Animal();
 	Animal(Direction);
 	Animal(int, int);
+	Animal(int, int, Direction);
 };
 
 

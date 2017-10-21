@@ -7,9 +7,11 @@ People::People(int x, int y)
 {
 	mX = x;
 	mY = y;
+	COORD temp = { -1,-1 };
+	oldPos.push_back(temp);
 }
 
-void People::Up(int)
+void People::Up()
 {
 	oldPos.clear();
 	int width = this->Width();
@@ -22,12 +24,12 @@ void People::Up(int)
 		oldPos.push_back(pos);
 	}
 
-	if (mY > BOARD_TOP_EDGE + 1) {
+	if (mY > BOARD_GAME_TOP + 1) {
 		mY--;
 	}
 }
 
-void People::Left(int)
+void People::Left()
 {
 	oldPos.clear();
 	int width = this->Width();
@@ -39,12 +41,12 @@ void People::Left(int)
 		oldPos.push_back(pos);
 	}
 
-	if (mX > BOARD_LEFT_EDGE + 1) {
+	if (mX > BOARD_GAME_LEFT + 1) {
 		mX--;
 	}
 }
 
-void People::Right(int)
+void People::Right()
 {
 	oldPos.clear();
 	int width = this->Width();
@@ -56,12 +58,12 @@ void People::Right(int)
 		oldPos.push_back(pos);
 	}
 
-	if (mX + fig.Width() - 1 < BOARD_RIGHT_EDGE - 1) {
+	if (mX + fig.Width() - 1 < BOARD_GAME_RIGHT - 1) {
 		mX++;
 	}
 }
 
-void People::Down(int)
+void People::Down()
 {
 	oldPos.clear();
 	int width = this->Width();
@@ -73,8 +75,24 @@ void People::Down(int)
 		oldPos.push_back(pos);
 	}
 
-	if (mY + fig.Height() - 1 < BOARD_BOTTOM_EDGE - 1) {
+	if (mY + fig.Height() - 1 < BOARD_GAME_BOTTOM - 1) {
 		mY++;
+	}
+}
+
+void People::Move(char MOVING)
+{
+	if (MOVING == 'A') {
+		this->Left();
+	}
+	else if (MOVING == 'D') {
+		this->Right();
+	}
+	else if (MOVING == 'S') {
+		this->Down();
+	}
+	else if (MOVING == 'W') {
+		this->Up();
 	}
 }
 
@@ -95,7 +113,9 @@ bool People::IsDead()
 
 void People::Print()
 {
-	this->EraseOld();
+	if (oldPos[0].X > 0) {
+		this->EraseOld();
+	}
 	fig.Print(mX, mY);
 }
 
@@ -112,10 +132,18 @@ void People::EraseOld()
 
 int People::Width()
 {
+	if (fig.width == 0) {
+		Figure f("Figure\\people.txt");
+		return f.Width();
+	}
 	return fig.Width();
 }
 
 int People::Height()
 {
+	if (fig.height == 0) {
+		Figure f("Figure\\people.txt");
+		return f.Height();
+	}
 	return fig.Height();
 }

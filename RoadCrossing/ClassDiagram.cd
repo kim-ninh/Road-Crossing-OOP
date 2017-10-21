@@ -23,6 +23,9 @@
   </Class>
   <Class Name="Dinosaur" Collapsed="true">
     <Position X="6.75" Y="3.25" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
     <TypeIdentifier>
       <HashCode>AAACAAAAAAAAAAAAAAAAAAAAAAkQAQAAAEAAAAAAAAA=</HashCode>
       <FileName>Dinosaur.h</FileName>
@@ -59,8 +62,11 @@
       <FileName>Lane.h</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Obstacle" Collapsed="true">
+  <Class Name="Obstacle">
     <Position X="7.75" Y="0.5" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
     <TypeIdentifier>
       <HashCode>AgAAAAAAAIAAAgAAggAAAAAAAAgAAQAACBAAAAAEAgA=</HashCode>
       <FileName>Obstacle.h</FileName>

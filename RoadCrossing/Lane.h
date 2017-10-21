@@ -8,7 +8,7 @@
 class Lane
 {
 private:
-	int width, heigth;
+	int width, height;
 	COORD pos;
 	vector<Obstacle*> obs;
 	Direction direc;
@@ -16,6 +16,9 @@ public:
 	Lane();
 	Lane(COORD, vector<Obstacle*>, Direction);
 	~Lane();
+	int Height();
+	void UpdatePos();
+	void Print();
 	COORD GetPos(People&);
 	bool IsImpact();
 };

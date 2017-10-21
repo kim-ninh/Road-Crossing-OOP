@@ -11,6 +11,8 @@ Bird::Bird(Direction theDirec) : Animal(theDirec) {}
 
 Bird::Bird(int x, int y) : Animal(x,y) {}
 
+Bird::Bird(int x, int y, Direction theDirec) : Animal(x, y, theDirec) {}
+
 const Figure & Bird::GetFigure()
 {
 	if (direc == LEFT) {
@@ -24,4 +26,9 @@ const Figure & Bird::GetFigure()
 const char * Bird::GetSoundFileName()
 {
 	return sSoundFileName;
+}
+
+Obstacle * Bird::Clone(int x, int y)
+{
+	return new Bird(x, y, direc);
 }

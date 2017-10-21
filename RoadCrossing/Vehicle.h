@@ -9,7 +9,8 @@ class Vehicle : public Obstacle
 public:
 	Vehicle();
 	Vehicle(Direction);
-	Vehicle(int, int, Direction theDirec = LEFT);
+	Vehicle(int, int);
+	Vehicle(int, int, Direction);
 };
 
 
