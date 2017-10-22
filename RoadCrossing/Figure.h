@@ -26,6 +26,7 @@ public:
 	Figure();
 	Figure(const char *file_name);
 	string Get(char *file_name);
+	vector<string> Get();
 	void Print(COORD);
 	void Print(int, int);
 	void PrintIntro(COORD);

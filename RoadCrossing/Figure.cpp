@@ -33,6 +33,11 @@ string Figure::Get(char * file_name)
 	return temp;
 }
 
+vector<string> Figure::Get()
+{
+	return str;
+}
+
 void Figure::Print(COORD coord)
 {
 	Print(coord.X, coord.Y);

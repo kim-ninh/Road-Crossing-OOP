@@ -27,6 +27,6 @@ void DrawBoard();
 void GotoXY(int, int);
 void GotoXY(COORD);
 COORD GetCursorPosition();
-
+void TextColor(short color);
 
 #endif // !_CONSOLE_H

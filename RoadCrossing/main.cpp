@@ -8,6 +8,7 @@
 #include "Car.h"
 #include "Truck.h"
 #include "Bird.h"
+#include "Menu.h"
 #include "Dinosaur.h"
 #include "Game.h"
 #include <conio.h>
@@ -98,6 +99,19 @@ int main() {
 
 	FixConsoleWindow();
 	DrawBoard();
+	
+	//Menu Test
+	/*Menu main(CONSOLE_MAX_WIDTH, CONSOLE_MAX_HEIGHT);
+	main.Print();
+	while (true)
+	{
+		char ch = toupper(_getch());
+		main.Control(ch);
+		main.Print();
+		Sleep(50);
+	}*/
+
+
 
 	thread t(ThreadFunct);
 

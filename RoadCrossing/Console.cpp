@@ -100,3 +100,8 @@ COORD GetCursorPosition()
 	pos = csbi.dwCursorPosition;
 	return pos;
 }
+
+void TextColor(short color)
+{
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color);
+}
