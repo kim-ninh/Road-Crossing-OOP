@@ -8,9 +8,9 @@
 #include "Car.h"
 #include "Truck.h"
 #include "Bird.h"
-#include "Menu.h"
 #include "Dinosaur.h"
 #include "Game.h"
+#include "Menu.h"
 #include <conio.h>
 #include <mutex>
 
@@ -34,19 +34,6 @@ using namespace std;
 
 Game game;
 
-void ThreadFunct() {
-	COORD pos;
-	while (true) {
-		//pos = GetCursorPosition();
-
-		game.UpdatePosObstacle();
-		lock_guard<mutex> *lock = new lock_guard<mutex>(theLock);
-		game.PrintObstacle();
-		delete lock;
-		Sleep(25);
-	}
-}
-
 int main() {
 
 #pragma region MyRegion
@@ -55,7 +42,6 @@ int main() {
 	////truck[1] = " █████████";
 	////truck[2] = "   ○   ○  ";
 	////
-
 
 	////FixConsoleWindow();
 	////UINT oldcp = GetConsoleOutputCP();
@@ -99,32 +85,9 @@ int main() {
 
 	FixConsoleWindow();
 	DrawBoard();
-	
-	//Menu Test
-	/*Menu main(CONSOLE_MAX_WIDTH, CONSOLE_MAX_HEIGHT);
-	main.Print();
-	while (true)
-	{
-		char ch = toupper(_getch());
-		main.Control(ch);
-		main.Print();
-		Sleep(50);
-	}*/
 
-
-
-	thread t(ThreadFunct);
-
-	game.PrintPeople();
-	while (true) {
-		
-		char ch = toupper(_getch());
-		game.UpdatePosPeople(ch);
-		lock_guard<mutex> lock(theLock);
-		game.PrintPeople();
-	}
-
-
+	Game game;
+	game.StartGame();
 
 
 	_getch();

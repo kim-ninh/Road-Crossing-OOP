@@ -23,6 +23,8 @@ public:
 	bool IsDead();
 	void Print();
 	void EraseOld();
+	COORD GetPosition();
+	Figure& GetFigure();
 	int Width();
 	int Height();
 };

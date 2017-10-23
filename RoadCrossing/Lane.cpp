@@ -47,3 +47,8 @@ void Lane::Print()
 	}
 
 }
+
+COORD Lane::GetPos()
+{
+	return pos;
+}

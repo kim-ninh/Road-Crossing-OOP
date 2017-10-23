@@ -33,7 +33,7 @@ string Figure::Get(char * file_name)
 	return temp;
 }
 
-vector<string> Figure::Get()
+vector<string>& Figure::Get()
 {
 	return str;
 }

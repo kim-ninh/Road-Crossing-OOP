@@ -20,6 +20,7 @@ public:
 	void UpdatePos();
 	void Print();
 	COORD GetPos(People&);
+	COORD GetPos();
 	bool IsImpact();
 };
 #endif // !_LANE_H

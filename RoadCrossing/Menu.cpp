@@ -2,7 +2,7 @@
 
 short Menu::findMiddleH()
 {
-	return CONSOLE_H / 2 - menuFig->Height() / 2 - menuFig->Height() % 2;
+	return CONSOLE_H / 2 - menuFig.Height() / 2 - menuFig.Height() % 2;
 }
 
 short Menu::findMiddleW(string menuTitle)
@@ -12,16 +12,42 @@ short Menu::findMiddleW(string menuTitle)
 
 Menu::Menu()
 {
+	CONSOLE_H = CONSOLE_MAX_HEIGHT;
+	CONSOLE_W = CONSOLE_MAX_WIDTH;
+	menuFig = Figure("Figure\\Menu.txt");
+	pastRow = 3;
+	currentRow = 4;		//Tiêu đề bắt đầu ở dòng thứ 2 từ trên xuống
+						//dòng đầu tiên là dòng 0
 }
 
 Menu::Menu(short consoleW, short consoleH)
 {
 	CONSOLE_H = consoleH;
 	CONSOLE_W = consoleW;
-	menuFig = new Figure("Figure\\Menu.txt");
+	menuFig = Figure("Figure\\Menu.txt");
 	pastRow = 3;
 	currentRow = 4;		//Tiêu đề bắt đầu ở dòng thứ 2 từ trên xuống
 						//dòng đầu tiên là dòng 0
+}
+
+void Menu::Erase()
+{
+	short x, y;
+	vector<string> str = menuFig.Get();
+	string s;
+	for (int rowIndex = 0; rowIndex < menuFig.Height(); rowIndex++)
+	{
+		int len = str[rowIndex].length();
+		
+		for (int i = 0; i < len; i++) {
+			s += ' ';
+		}
+		
+		x = findMiddleW(str[rowIndex]) - 1;
+		y = findMiddleH() + rowIndex;
+		GotoXY(x, y);
+		printf("%s", s.c_str());
+	}
 }
 
 void Menu::Up()
@@ -34,15 +60,15 @@ void Menu::Up()
 
 void Menu::Down()
 {
-	if (currentRow == menuFig->Height() - 1 - 4)
+	if (currentRow == menuFig.Height() - 1 - 4)
 		return;
 	pastRow = currentRow;
 	currentRow++;
 }
 
 void Menu::Enter() // truyền biến tiểu trình?
-{
-	this->Down();
+{	
+	
 }
 
 void Menu::Control(char KEY)
@@ -55,11 +81,32 @@ void Menu::Control(char KEY)
 	}
 }
 
+string Menu::Select()
+{
+	Print();
+	while (true)
+	{
+		char ch = toupper(_getch());
+		
+		switch (ch)
+		{
+		case'W': this->Up(); break;
+		case'S': this->Down(); break;
+		case 13: 
+			TextColor(15);
+			return menuFig.Get()[currentRow];		//Mã ASCII của Enter: 13
+		}
+
+		Print();
+		Sleep(50);
+	}
+}
+
 void Menu::Print()
 {
-	int x, y;
-	vector<string> str = menuFig->Get();
-	for (int rowIndex = 0; rowIndex < menuFig->Height(); rowIndex++)
+	short x, y;
+	vector<string> str = menuFig.Get();
+	for (int rowIndex = 0; rowIndex < menuFig.Height(); rowIndex++)
 	{
 		x = findMiddleW(str[rowIndex]) - 1;
 		y = findMiddleH() + rowIndex;
@@ -74,12 +121,12 @@ void Menu::Print()
 			TextColor(6);
 			printf(" %s ", str[rowIndex].c_str());
 		}
-		else if (rowIndex == 1 || rowIndex == menuFig->Height() - 1 - 1)
+		else if (rowIndex == 1 || rowIndex == menuFig.Height() - 1 - 1)
 		{
 			TextColor(15);
 			printf(" %s ", str[rowIndex].c_str());
 		}
-		else if (rowIndex == 0 || rowIndex == menuFig->Height() - 1)
+		else if (rowIndex == 0 || rowIndex == menuFig.Height() - 1)
 		{
 			TextColor(11);
 			printf(" %s ", str[rowIndex].c_str());

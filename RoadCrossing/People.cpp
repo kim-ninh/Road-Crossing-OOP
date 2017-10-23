@@ -130,6 +130,17 @@ void People::EraseOld()
 	}
 }
 
+COORD People::GetPosition()
+{
+	COORD pos = { mX,mY };
+	return pos;
+}
+
+Figure& People::GetFigure()
+{
+	return fig;
+}
+
 int People::Width()
 {
 	if (fig.width == 0) {

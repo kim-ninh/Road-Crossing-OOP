@@ -5,11 +5,11 @@
 #include <Windows.h>
 #include <cstdio>
 
-#define CONSOLE_MAX_HEIGHT 60
+#define CONSOLE_MAX_HEIGHT 70
 #define CONSOLE_MAX_WIDTH 200
 
 #define WIDTH_OFFSET 20
-#define HEIGHT_OFFSET 3
+#define HEIGHT_OFFSET 5
 
 #define BOARD_LEFT_EDGE WIDTH_OFFSET		// Cạnh trái của khung Game (x)
 #define BOARD_RIGHT_EDGE (CONSOLE_MAX_WIDTH - WIDTH_OFFSET - 1)		// Cạnh phải (x)
@@ -27,6 +27,6 @@ void DrawBoard();
 void GotoXY(int, int);
 void GotoXY(COORD);
 COORD GetCursorPosition();
-void TextColor(short color);
+void TextColor(short);
 
 #endif // !_CONSOLE_H

@@ -2,5 +2,5 @@
 # This .gitignore file was automatically created by Microsoft(R) Visual Studio.
 ################################################################################
 
-/16CTT3-Group-01.VC.db
-/16CTT3-Group-01.VC.VC.opendb
+*.opendb
+*.db
