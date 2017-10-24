@@ -14,7 +14,8 @@ Menu::Menu()
 {
 	CONSOLE_H = CONSOLE_MAX_HEIGHT;
 	CONSOLE_W = CONSOLE_MAX_WIDTH;
-	menuFig = Figure("Figure\\Menu.txt");
+	//menuFig = Figure("Figure\\Menu.txt");
+	this->Set("main");
 	pastRow = 3;
 	currentRow = 4;		//Tiêu đề bắt đầu ở dòng thứ 2 từ trên xuống
 						//dòng đầu tiên là dòng 0
@@ -24,7 +25,8 @@ Menu::Menu(short consoleW, short consoleH)
 {
 	CONSOLE_H = consoleH;
 	CONSOLE_W = consoleW;
-	menuFig = Figure("Figure\\Menu.txt");
+	//menuFig = Figure("Figure\\Menu.txt");
+	this->Set("main");
 	pastRow = 3;
 	currentRow = 4;		//Tiêu đề bắt đầu ở dòng thứ 2 từ trên xuống
 						//dòng đầu tiên là dòng 0
@@ -48,6 +50,17 @@ void Menu::Erase()
 		GotoXY(x, y);
 		printf("%s", s.c_str());
 	}
+}
+
+void Menu::Set(const char * menuType)
+{
+	if (strcmp(menuType, "main") == 0)
+		menuFig.Set("Figure\\Main_Menu.txt");
+	else if (strcmp(menuType, "pause") == 0)
+		menuFig.Set("Figure\\Pause_Menu.txt");
+	else if (strcmp(menuType, "lose") == 0)
+		menuFig.Set("Figure\\Lose_Menu.txt");
+		
 }
 
 void Menu::Up()

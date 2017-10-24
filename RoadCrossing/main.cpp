@@ -86,6 +86,9 @@ int main() {
 	FixConsoleWindow();
 	DrawBoard();
 
+	
+	//PlaySound("Sound\\TheFatRat_Unity.wav", NULL, SND_LOOP);
+
 	Game game;
 	game.StartGame();
 

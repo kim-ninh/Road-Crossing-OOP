@@ -16,6 +16,20 @@ Figure::Figure(const char * file_name)
 	}
 	width = str[0].length();
 }
+void Figure::Set(const char * file_name)
+{
+	str.clear();
+	ifstream inFile(file_name);
+	width = height = 0;
+	char buf[MAX + 1];
+
+	while (!inFile.eof()) {
+		inFile.getline(buf, MAX);
+		str.push_back(string(buf));
+		height++;
+	}
+	width = str[0].length();
+}
 string Figure::Get(char * file_name)
 {
 	std::wifstream wif(file_name);

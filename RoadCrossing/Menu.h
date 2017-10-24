@@ -20,7 +20,7 @@ public:
 	Menu();
 	Menu(short consoleW, short consoleH);
 	void Erase();
-
+	void Set(const char *menuType);		//menuType: main, pause, lose
 	void Up();
 	void Down();
 	void Enter(); //truyền biến tiểu trình?

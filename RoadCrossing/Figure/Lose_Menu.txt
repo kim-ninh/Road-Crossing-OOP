@@ -1,0 +1,11 @@
+UP
+W
+ 
+ 
+RESTART
+MAIN MENU
+QUIT
+ 
+ 
+S
+DOWN

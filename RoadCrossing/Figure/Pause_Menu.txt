@@ -1,0 +1,12 @@
+UP
+W
+ 
+ 
+CONTINUE
+INTRUCTION
+ABOUT
+QUIT
+ 
+ 
+S
+DOWN
