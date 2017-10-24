@@ -100,13 +100,13 @@ string Menu::Select()
 	while (true)
 	{
 		char ch = toupper(_getch());
-		
 		switch (ch)
 		{
-		case'W': this->Up(); break;
-		case'S': this->Down(); break;
+		case'W': this->Up(); PlaySound("Sound\\sfx_menu_move4.wav", NULL, SND_ASYNC); break;
+		case'S': this->Down(); PlaySound("Sound\\sfx_menu_move4.wav", NULL, SND_ASYNC); break;
 		case 13: 
 			TextColor(15);
+			PlaySound("Sound\\sfx_menu_select4.wav", NULL, SND_ASYNC);
 			return menuFig.Get()[currentRow];		//Mã ASCII của Enter: 13
 		}
 

@@ -184,6 +184,7 @@ void Game::ExitGame(HANDLE)
 
 void Game::StartGame()
 {
+	PlaySound("Sound\\TheFatRat_Unity.wav", NULL, SND_ASYNC);
 	string select = menu.Select();
 	menu.Erase();
 	if (select == "NEW GAME") {
