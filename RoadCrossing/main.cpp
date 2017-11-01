@@ -75,19 +75,15 @@ int main() {
 #pragma endregion
 
 	//ShowWindow(GetConsoleWindow(), SW_MAXIMIZE);
-
-	//SetConsoleFontSize({ 10, 18 });	
-
+	
+	
 	//CONSOLE_SCREEN_BUFFER_INFO csbi;
 	//GetConsoleScreenBufferInfo(ConsoleHanlde, &csbi);
 	//cout << csbi.srWindow.Bottom;
 
 
-	FixConsoleWindow();
-	DrawBoard();
-
 	
-	//PlaySound("Sound\\TheFatRat_Unity.wav", NULL, SND_LOOP);
+	//DrawBoard();
 
 	Game game;
 	game.StartGame();

@@ -8,7 +8,7 @@ void FixConsoleWindow(int width,int height)
 	LONG style = GetWindowLong(consoleWindow, GWL_STYLE);
 	style = style & ~(WS_MAXIMIZEBOX) & ~(WS_THICKFRAME);
 	SetWindowLong(consoleWindow, GWL_STYLE, style);
-	
+
 	// Ẩn con trỏ của màn hình Console
 	CONSOLE_CURSOR_INFO info;
 	HANDLE ConsoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -26,12 +26,13 @@ void FixConsoleWindow(int width,int height)
 	SetConsoleWindowInfo(ConsoleHandle, TRUE, &Rect);
 }
 
-BOOL SetConsoleFontSize(COORD dwFontSize) {
+BOOL SetConsoleFontSize(COORD dwFontSize, const wchar_t *fontName) {
 	HANDLE output = GetStdHandle(STD_OUTPUT_HANDLE);
 	CONSOLE_FONT_INFOEX info{ sizeof(CONSOLE_FONT_INFOEX) };
 	if (!GetCurrentConsoleFontEx(output, false, &info))
 		return false;
 	info.dwFontSize = dwFontSize;
+	wcscpy_s(info.FaceName, fontName);
 	return SetCurrentConsoleFontEx(output, false, &info);
 }
 

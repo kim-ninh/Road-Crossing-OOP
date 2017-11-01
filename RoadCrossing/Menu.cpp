@@ -12,8 +12,8 @@ short Menu::findMiddleW(string menuTitle)
 
 Menu::Menu()
 {
-	CONSOLE_H = CONSOLE_MAX_HEIGHT;
-	CONSOLE_W = CONSOLE_MAX_WIDTH;
+	CONSOLE_H = CONSOLE_MENU_HEIGHT; 
+	CONSOLE_W = CONSOLE_MENU_WIDTH;
 	//menuFig = Figure("Figure\\Menu.txt");
 	this->Set("main");
 	pastRow = 3;
@@ -48,7 +48,7 @@ void Menu::Erase()
 		x = findMiddleW(str[rowIndex]) - 1;
 		y = findMiddleH() + rowIndex;
 		GotoXY(x, y);
-		printf("%s", s.c_str());
+		printf(" %s ", s.c_str());
 	}
 }
 

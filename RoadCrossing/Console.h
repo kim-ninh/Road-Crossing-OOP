@@ -8,6 +8,9 @@
 #define CONSOLE_MAX_HEIGHT 70
 #define CONSOLE_MAX_WIDTH 200
 
+#define CONSOLE_MENU_HEIGHT 28
+#define CONSOLE_MENU_WIDTH	100
+
 #define WIDTH_OFFSET 20
 #define HEIGHT_OFFSET 5
 
@@ -22,7 +25,7 @@
 #define BOARD_GAME_RIGHT (BOARD_RIGHT_EDGE - 0)
 
 void FixConsoleWindow(int width = CONSOLE_MAX_WIDTH, int height = CONSOLE_MAX_HEIGHT);
-BOOL SetConsoleFontSize(COORD dwFontSize);
+BOOL SetConsoleFontSize(COORD dwFontSize, const wchar_t *fontName);
 void DrawBoard();
 void GotoXY(int, int);
 void GotoXY(COORD);

@@ -185,9 +185,14 @@ void Game::ExitGame(HANDLE)
 void Game::StartGame()
 {
 	PlaySound("Sound\\TheFatRat_Unity.wav", NULL, SND_ASYNC);
+	SetConsoleFontSize({ 17, 36 }, L"Consolas");
+	FixConsoleWindow(CONSOLE_MENU_WIDTH, CONSOLE_MENU_HEIGHT);
 	string select = menu.Select();
 	menu.Erase();
-	if (select == "NEW GAME") {
+	
+	SetConsoleFontSize({ 6,12 }, L"Lucida Console");
+	FixConsoleWindow(CONSOLE_MAX_WIDTH, CONSOLE_MAX_HEIGHT);
+	if (select == "NEW GAME") {	
 		Init();
 		Run();
 	}
