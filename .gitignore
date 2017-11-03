@@ -4,3 +4,9 @@
 
 *.opendb
 *.db
+/RoadCrossing/Release
+/Release
+/.vs/16CTT3-Group-01/v14
+/.vs/16CTT3-Group-01/v15
+/RoadCrossing/Debug
+/Debug

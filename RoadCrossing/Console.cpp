@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "Console.h"
 
-void FixConsoleWindow(int width, int height)
+void FixConsoleWindow(int width,int height)
 {
 	// Cố định cửa sổ console, ngăn người dùng thay đổi kích thước và làm mờ nút Maximize
 	HWND consoleWindow = GetConsoleWindow();
@@ -24,44 +24,9 @@ void FixConsoleWindow(int width, int height)
 	// Cố dịnh kích thước cửa sổ Console với một Size xác định
 	SMALL_RECT Rect = { 0,0,ConsoleBufferSize.X - 1,ConsoleBufferSize.Y - 1 };
 	SetConsoleWindowInfo(ConsoleHandle, TRUE, &Rect);
-
-
-	//for (int i = BOARD_GAME_TOP; i <= BOARD_GAME_BOTTOM; i++) {
-	//	GotoXY(WIDTH_OFFSET - 2, i);
-	//	printf("%d", i);
-	//	GotoXY(BOARD_GAME_RIGHT + 1, i);
-	//	printf("%d", i);
-	//}
-	//
-	//for (int i = BOARD_GAME_LEFT; i <= BOARD_GAME_RIGHT; i++) {
-	//	GotoXY(i, BOARD_GAME_TOP - 3);
-	//	printf("%d", i / 100);
-	//	GotoXY(i, BOARD_GAME_TOP - 2);
-	//	printf("%d", (i%100)/10);
-	//	GotoXY(i, BOARD_GAME_TOP - 1);
-	//	printf("%d", i % 10);
-	//	GotoXY(i, BOARD_GAME_BOTTOM + 1);
-	//	printf("%d", i/100);		
-	//	GotoXY(i, BOARD_GAME_BOTTOM + 2);
-	//	printf("%d", (i%100)/10);
-	//	GotoXY(i, BOARD_GAME_BOTTOM + 3);
-	//	printf("%d", i % 10);
-	//}
 }
 
 BOOL SetConsoleFontSize(COORD dwFontSize, const wchar_t *fontName) {
-	//HANDLE output = GetStdHandle(STD_OUTPUT_HANDLE);
-	//CONSOLE_FONT_INFOEX info{ sizeof(CONSOLE_FONT_INFOEX) };
-
-	//if (!GetCurrentConsoleFontEx(output, false, &info))
-	//	return false;
-
-	//info.dwFontSize = dwFontSize;
-	//info.FontFamily = FF_DONTCARE;
-	//info.FontWeight = FW_NORMAL;
-	////wcscpy(info.FaceName, L"Lucida Console");
-	//wcscpy(info.FaceName, L"Lucida Console");
-	//return SetCurrentConsoleFontEx(output, false, &info);
 	HANDLE output = GetStdHandle(STD_OUTPUT_HANDLE);
 	CONSOLE_FONT_INFOEX info{ sizeof(CONSOLE_FONT_INFOEX) };
 	if (!GetCurrentConsoleFontEx(output, false, &info))

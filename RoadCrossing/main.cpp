@@ -1,7 +1,16 @@
 ﻿
 #define _CRT_SECURE_NO_WARNINGS
+#include <iostream>
+#include <windows.h>
+#include <string>
 #include "Console.h"
+#include "Frame.h"
+#include "Car.h"
+#include "Truck.h"
+#include "Bird.h"
+#include "Dinosaur.h"
 #include "Game.h"
+#include "Menu.h"
 #include <conio.h>
 #include <mutex>
 
@@ -22,6 +31,8 @@ using namespace std;
 //
 //	delete ob;
 //}
+
+Game game;
 
 int main() {
 
@@ -64,19 +75,15 @@ int main() {
 #pragma endregion
 
 	//ShowWindow(GetConsoleWindow(), SW_MAXIMIZE);
-
-	//SetConsoleFontSize({ 10, 18 });	
-
+	
+	
 	//CONSOLE_SCREEN_BUFFER_INFO csbi;
 	//GetConsoleScreenBufferInfo(ConsoleHanlde, &csbi);
 	//cout << csbi.srWindow.Bottom;
 
-	SetConsoleOutputCP(437);
-	//SetConsoleFontSize({ 7, 12}, L"Lucida Console");
-	//FixConsoleWindow();
 
 	
-	//PlaySound("Sound\\TheFatRat_Unity.wav", NULL, SND_LOOP);
+	//DrawBoard();
 
 	Game game;
 	game.StartGame();
@@ -85,3 +92,4 @@ int main() {
 	_getch();
 	return 0;
 }
+
