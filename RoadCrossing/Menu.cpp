@@ -12,8 +12,8 @@ short Menu::findMiddleW(string menuTitle)
 
 Menu::Menu()
 {
-	CONSOLE_H = CONSOLE_MAX_HEIGHT;
-	CONSOLE_W = CONSOLE_MAX_WIDTH;
+	CONSOLE_H = CONSOLE_MENU_HEIGHT;
+	CONSOLE_W = CONSOLE_MENU_WIDTH;
 	//menuFig = Figure("Figure\\Menu.txt");
 	this->Set("main");
 	pastRow = 3;
@@ -61,7 +61,9 @@ void Menu::Set(const char * menuType)
 		menuFig.Set("Figure\\Pause_Menu.txt");
 	else if (strcmp(menuType, "lose") == 0)
 		menuFig.Set("Figure\\Lose_Menu.txt");
-		
+
+	aboutSection.Set("Figure\\About.txt");
+	helpSection.Set("Figure\\Instruction.txt");
 }
 
 void Menu::Up()
@@ -152,3 +154,96 @@ void Menu::Print()
 		}
 	}
 }
+
+// ===============  Testing Area =====================
+void Menu::PrintHelp()
+{
+	GotoXY(0, 0);
+	vector<string> str = helpSection.Get();
+	TextColor(15);
+	for (int rowIndex = 0; rowIndex < helpSection.Height(); rowIndex++)
+		printf("%s\n", str[rowIndex].c_str());
+}
+
+void Menu::PrintAbout(short x, short y)
+{
+	//short x, y;
+	vector<string> str = aboutSection.Get();
+	TextColor(15);
+
+	for (int rowIndex = 0; rowIndex < aboutSection.Height(); rowIndex++)
+	{
+		if (y + rowIndex < CONSOLE_H)
+		{
+			x = findMiddleW(str[rowIndex]);
+			GotoXY(x, y + rowIndex);
+			printf("%s", str[rowIndex].c_str());
+		}
+	}
+
+}
+
+void Menu::AboutAnimation()
+{
+	short x, y;
+	x = 0;
+	y = CONSOLE_H;
+	while (true)
+	{
+		if (y + aboutSection.Height() == 0)
+			y = CONSOLE_H;
+
+		PrintAbout(x, y);
+
+		y--;
+		Sleep(1000);
+		EraseAboutSection(x, y);
+	}
+}
+
+void Menu::EraseMenu()
+{
+	short x, y;
+	vector<string> str = menuFig.Get();
+	string s;
+	for (int rowIndex = 0; rowIndex < menuFig.Height(); rowIndex++)
+	{
+		int len = str[rowIndex].length();
+
+		for (int i = 0; i < len; i++) {
+			s += ' ';
+		}
+
+		x = findMiddleW(str[rowIndex]) - 1;
+		y = findMiddleH() + rowIndex;
+		GotoXY(x, y);
+		printf(" %s ", s.c_str());
+	}
+}
+
+void Menu::EraseHelpSection()
+{
+	GotoXY(0, 0);
+	vector<string> str = helpSection.Get();
+	TextColor(15);
+	for (int rowIndex = 0; rowIndex < helpSection.Height(); rowIndex++)
+	{
+		string s;
+		short len = str[rowIndex].length();
+		for (int i = 0; i < len; i++)
+			s += ' ';
+		printf("%s\n", s.c_str());
+	}
+}
+
+void Menu::EraseAboutSection(short x, short y)
+{
+	//short x, y;
+	string s;
+	for (int i = 0; i < CONSOLE_W; i++)
+		s += ' ';
+
+	for (int i = 0; i < CONSOLE_H; i++)
+		printf("%s\n", s.c_str());
+}
+

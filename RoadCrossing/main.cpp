@@ -23,8 +23,6 @@ using namespace std;
 //	delete ob;
 //}
 
-Game game;
-
 int main() {
 
 #pragma region MyRegion
@@ -74,9 +72,8 @@ int main() {
 	//cout << csbi.srWindow.Bottom;
 
 	SetConsoleOutputCP(437);
-	SetConsoleFontSize({ 7, 12});
-	FixConsoleWindow();
-	DrawBoard();
+	//SetConsoleFontSize({ 7, 12}, L"Lucida Console");
+	//FixConsoleWindow();
 
 	
 	//PlaySound("Sound\\TheFatRat_Unity.wav", NULL, SND_LOOP);

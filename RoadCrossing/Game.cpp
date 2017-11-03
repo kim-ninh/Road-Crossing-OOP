@@ -226,12 +226,27 @@ void Game::ExitGame(HANDLE)
 void Game::StartGame()
 {
 	PlaySound("Sound\\TheFatRat_Unity.wav", NULL, SND_ASYNC);
+
+	SetConsoleFontSize({ bigFontSizeW, bigFontSizeH }, L"Consolas");
+	FixConsoleWindow(CONSOLE_MENU_WIDTH, CONSOLE_MENU_HEIGHT);
+
 	string select = menu.Select();
-	menu.Erase();
+	menu.EraseMenu();
+
+
 	if (select == "NEW GAME") {
+		SetConsoleFontSize({ smallFontSizeW,smallFontSizeH }, L"Lucida Console");
+		FixConsoleWindow(CONSOLE_MAX_WIDTH, CONSOLE_MAX_HEIGHT);
+		DrawBoard();
 		Init();
 		Run();
 	}
+
+	if (select == "INTRUCTION")
+		menu.PrintHelp();
+
+	if (select == "ABOUT")
+		menu.AboutAnimation();
 }
 
 void Game::LoadGame(istream &)
@@ -303,7 +318,9 @@ void Game::ProcessDead()
 	const clock_t begin = clock();
 	const int delay_time = 1;
 
-	while ((clock() - begin) / CLOCKS_PER_SEC < delay_time);
+	while ((clock() - begin) / CLOCKS_PER_SEC < delay_time) {
+		
+	}
 
 	ClearBoard();
 	menu.Set("lose");
