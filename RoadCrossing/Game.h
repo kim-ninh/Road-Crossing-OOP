@@ -14,6 +14,9 @@
 #include "Bird.h"
 #include "Dinosaur.h"
 #include "Menu.h"
+
+//test
+#include <ctime>
 using namespace std;
 
 
@@ -22,15 +25,17 @@ using namespace std;
 #define MAX_LEVEL 4
 #define SIDE_WALK_HEIGHT 4		//  chiều cao vỉa hè
 #define DISTANCE 5
-
+#define SLEEP_TIME 25
+#define MAX_LANE 8
 
 class Game
 {
 private:
 	vector<Lane> lane;
 	People people;
-	static int level;
+	int level;
 	Menu menu;
+	thread t;
 public:
 	Game();
 	void DrawGame();
@@ -40,6 +45,7 @@ public:
 	void Run();
 	void ThreadFunct();
 	void ResetGame();
+	void PauseGame();
 	void ExitGame(HANDLE);
 	void StartGame();
 	void LoadGame(istream&);
@@ -48,9 +54,12 @@ public:
 	void ResumeGame(HANDLE);
 	void UpdatePosPeople(char MOVING);
 	void UpdatePosObstacle();
+	bool IsImpact();
+	void ProcessDead();
 	void PrintObstacle();
 	void PrintPeople();
 	void PrintSeparator();
+	void ClearBoard() const;
 };
 
 

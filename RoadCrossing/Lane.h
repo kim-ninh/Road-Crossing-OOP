@@ -21,6 +21,6 @@ public:
 	void Print();
 	COORD GetPos(People&);
 	COORD GetPos();
-	bool IsImpact();
+	bool IsImpact(People& people);
 };
 #endif // !_LANE_H
