@@ -207,11 +207,19 @@ void Game::PauseGame()
 	lock_guard<mutex> lock(theLock);
 	SuspendThread(t.native_handle());
 	ClearBoard();
+
+	SetConsoleFontSize({ bigFontSizeW, bigFontSizeH }, L"Consolas");
+	FixConsoleWindow(CONSOLE_MENU_WIDTH, CONSOLE_MENU_HEIGHT);
+
 	menu.Set("pause");
 	menu.Print();
 	string select = menu.Select();
+
 	if (select == "CONTINUE") {
 		menu.Erase();
+		SetConsoleFontSize({ smallFontSizeW, smallFontSizeH }, L"Lucida Console");
+		FixConsoleWindow(CONSOLE_MAX_WIDTH, CONSOLE_MAX_HEIGHT);
+		DrawBoard();
 		PrintPeople();
 		//delete lock;
 		ResumeThread(t.native_handle());
@@ -230,7 +238,7 @@ void Game::StartGame()
 	SetConsoleFontSize({ bigFontSizeW, bigFontSizeH }, L"Consolas");
 	FixConsoleWindow(CONSOLE_MENU_WIDTH, CONSOLE_MENU_HEIGHT);
 
-	string select = menu.Select();
+	const string select = menu.Select();
 	menu.EraseMenu();
 
 
@@ -318,17 +326,23 @@ void Game::ProcessDead()
 	const clock_t begin = clock();
 	const int delay_time = 1;
 
-	while ((clock() - begin) / CLOCKS_PER_SEC < delay_time) {
-		
-	}
+	Sleep(2000);
 
 	ClearBoard();
+	SetConsoleFontSize({ bigFontSizeW, bigFontSizeH }, L"Consolas");
+	FixConsoleWindow(CONSOLE_MENU_WIDTH, CONSOLE_MENU_HEIGHT);
+
 	menu.Set("lose");
 	menu.Print();
 	string select = menu.Select();
 
 	if (select == "RESTART") {
+
+		SetConsoleFontSize({ smallFontSizeW,smallFontSizeH }, L"Lucida Console");
+		FixConsoleWindow(CONSOLE_MAX_WIDTH, CONSOLE_MAX_HEIGHT);
 		menu.Erase();
+		DrawBoard();
+
 		lane.clear();
 		this->Init();
 	}
@@ -410,12 +424,12 @@ void Game::PrintSeparator()
 void Game::ClearBoard() const
 {
 	string s;
-	for (int i = BOARD_LEFT_EDGE + 1; i < BOARD_RIGHT_EDGE; i++) {
+	for (int i = BOARD_LEFT_EDGE; i <= BOARD_RIGHT_EDGE; i++) {
 		s += ' ';
 	}
 
-	for (int i = BOARD_TOP_EDGE + 1; i < BOARD_BOTTOM_EDGE; i++) {
-		GotoXY(BOARD_LEFT_EDGE + 1, i);
+	for (int i = BOARD_TOP_EDGE; i <= BOARD_BOTTOM_EDGE; i++) {
+		GotoXY(BOARD_LEFT_EDGE, i);
 		printf("%s", s.c_str());
 	}
 }
