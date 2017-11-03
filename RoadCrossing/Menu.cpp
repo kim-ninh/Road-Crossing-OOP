@@ -10,23 +10,9 @@ short Menu::findMiddleW(string menuTitle)
 	return CONSOLE_W / 2 - menuTitle.length() / 2 - menuTitle.length() % 2;
 }
 
-short Menu::findLongestStrPos(vector<string> text)
-{
-	short pos, longestStr = text[0].length();
-	for (int i = 0; i < text.size(); i++)
-	{
-		if (longestStr < text[i].length())
-		{
-			longestStr = text[i].length();
-			pos = i;
-		}
-	}
-	return pos;
-}
-
 Menu::Menu()
 {
-	CONSOLE_H = CONSOLE_MENU_HEIGHT; 
+	CONSOLE_H = CONSOLE_MENU_HEIGHT;
 	CONSOLE_W = CONSOLE_MENU_WIDTH;
 	//menuFig = Figure("Figure\\Menu.txt");
 	this->Set("main");
@@ -49,20 +35,21 @@ Menu::Menu(short consoleW, short consoleH)
 void Menu::Erase()
 {
 	short x, y;
-	vector<string> str = menuFig.Get();
-	string s;
+	vector<string> str = menuFig.Get();		// chứa figure của menu
+	string s;		// chứa khoảng trắng để in ra xóa menu trong console
 	for (int rowIndex = 0; rowIndex < menuFig.Height(); rowIndex++)
 	{
 		int len = str[rowIndex].length();
-
+		
 		for (int i = 0; i < len; i++) {
 			s += ' ';
 		}
+		s += ' ';
 
 		x = findMiddleW(str[rowIndex]) - 1;
 		y = findMiddleH() + rowIndex;
 		GotoXY(x, y);
-		printf(" %s ", s.c_str());
+		printf("%s", s.c_str());
 	}
 }
 
@@ -77,7 +64,6 @@ void Menu::Set(const char * menuType)
 
 	aboutSection.Set("Figure\\About.txt");
 	helpSection.Set("Figure\\Instruction.txt");
-		
 }
 
 void Menu::Up()
@@ -168,6 +154,7 @@ void Menu::Print()
 		}
 	}
 }
+
 // ===============  Testing Area =====================
 void Menu::PrintHelp()
 {
@@ -178,14 +165,15 @@ void Menu::PrintHelp()
 		printf("%s\n", str[rowIndex].c_str());
 }
 
-void Menu::PrintAbout(short y)
+void Menu::PrintAbout(short x, short y)
 {
+	//short x, y;
 	vector<string> str = aboutSection.Get();
-	short x;
+	TextColor(15);
 
 	for (int rowIndex = 0; rowIndex < aboutSection.Height(); rowIndex++)
 	{
-		if (y + rowIndex < CONSOLE_H && y + rowIndex >= 0)
+		if (y + rowIndex < CONSOLE_H)
 		{
 			x = findMiddleW(str[rowIndex]);
 			GotoXY(x, y + rowIndex);
@@ -197,19 +185,19 @@ void Menu::PrintAbout(short y)
 
 void Menu::AboutAnimation()
 {
-	short y;
+	short x, y;
+	x = 0;
 	y = CONSOLE_H;
-	TextColor(15);
 	while (true)
 	{
 		if (y + aboutSection.Height() == 0)
 			y = CONSOLE_H;
-		EraseAboutSection();
-		PrintAbout(y);
+
+		PrintAbout(x, y);
 
 		y--;
-		Sleep(400);
-		
+		Sleep(1000);
+		EraseAboutSection(x, y);
 	}
 }
 
@@ -248,20 +236,14 @@ void Menu::EraseHelpSection()
 	}
 }
 
-void Menu::EraseAboutSection()
+void Menu::EraseAboutSection(short x, short y)
 {
-	short x;
-	vector<string> str = aboutSection.Get();
-	int pos = findLongestStrPos(str);
-	x = findMiddleW(str[pos]);
+	//short x, y;
 	string s;
-	for (int i = 0; i < str[pos].length(); i++)
+	for (int i = 0; i < CONSOLE_W; i++)
 		s += ' ';
-	
+
 	for (int i = 0; i < CONSOLE_H; i++)
-	{
-		GotoXY(x, i);
-		printf("%s", s.c_str());
-	}
+		printf("%s\n", s.c_str());
 }
 

@@ -34,6 +34,9 @@ public:
 	int Height();
 	void EraseOldPos();
 	void Print();
+	COORD GetPosition();
+	bool IsImpact(People& people);
+	void SetPosition(short, short);
 	virtual Obstacle * Clone(int, int) = 0;
 };
 

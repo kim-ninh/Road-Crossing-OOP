@@ -1,4 +1,5 @@
 ﻿#pragma once
+#define _CRT_SECURE_NO_WARNINGS
 #ifndef _CONSOLE_H
 #define _CONSOLE_H
 
@@ -18,8 +19,9 @@
 #define bigFontSizeH (short)GetSystemMetrics(SM_CYSCREEN)/CONSOLE_MENU_HEIGHT  - 2		// = 36
 // important: smallFontSizeW * CONSOLE_MAX_WIDTH == bigFontSizeW * CONSOLE_MENU_WIDTH
 //			&&smallFontSizeH * CONSOLE_MAX_HEIGHT == bigFontSizeH * CONSOLE_MENU_HEIGHT
+
 #define WIDTH_OFFSET 20
-#define HEIGHT_OFFSET 3
+#define HEIGHT_OFFSET 4
 
 #define BOARD_LEFT_EDGE WIDTH_OFFSET		// Cạnh trái của khung Game (x)
 #define BOARD_RIGHT_EDGE (CONSOLE_MAX_WIDTH - WIDTH_OFFSET - 1)		// Cạnh phải (x)

@@ -1,7 +1,5 @@
 ABOUT US
-
-Made by NNNPP
-HCMUS K16 11/2017
+Made by NNNPP - HCMUS K16 11/2017
  
 Sound Effect
  
@@ -10,8 +8,7 @@ Juhani Junkala
  
 Graphic
  	
-ASCII Art 
-(http://www.chris.com/ascii/)
+ASCII Art (http://www.chris.com/ascii/ )
  
  
 Technical leader

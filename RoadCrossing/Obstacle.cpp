@@ -37,7 +37,7 @@ void Obstacle::Move()
 			mX--;
 		}
 		else {
-			mX = BOARD_GAME_RIGHT - 1;
+			mX = BOARD_GAME_RIGHT - width + 1;
 		}
 	}
 	else {
@@ -121,3 +121,23 @@ void Obstacle::Print()
 
 	fig.Print(mX, mY);
 }
+
+COORD Obstacle::GetPosition()
+{
+	COORD pos = { mX,mY };
+
+	return pos;
+}
+
+void Obstacle::SetPosition(short x, short y)
+{
+	mX = x;
+	mY = y;
+}
+
+//bool Obstacle::IsImpact(People& people)
+//{
+//	vector<string> obs_fig = *(const_cast<vector<string>*>(this->GetFigure()).Get());
+//	)
+//	Figure people_fig = people.GetFigure();
+//}

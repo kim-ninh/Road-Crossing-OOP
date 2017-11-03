@@ -2,7 +2,6 @@
 #include "Game.h"
 
 
-int Game::level = 0;
 
 Game::Game()
 {
@@ -33,11 +32,12 @@ void Game::Init()
 {
 	// Tạo các lane vật thể
 
-	int i = 0, pos, arr[8] = { 0 };
+	int pos;			// biến tạm giữ vị trí
+	int arr[8] = { 0 };		// mảng chứa 8 số random tượng trưng cho 8 lane
 	Figure fig;
-	short height = HEIGHT_OFFSET + 1 + SIDE_WALK_HEIGHT + 1;
+	short height = HEIGHT_OFFSET + 1 + SIDE_WALK_HEIGHT + 1;			// chiều cao tính từ đầu màn hình console
 
-	srand((unsigned)time(NULL));
+	srand(static_cast<unsigned>(time(nullptr)));
 
 	// tạo 8 số ngẫu nhiên từ 1 tới 4, mỗi số lặp lại đúng 2 lần
 	for (int i = 1; i <= 4; i++) {
@@ -58,16 +58,17 @@ void Game::Init()
 	COORD lanePos;
 	for (int i = 0; i < 8; i++) {
 
-		n = MINIMUM + level;		// random số vật thể của lane
+		n = (MINIMUM + level) + 1;		// số vật thể của lane, 1 là vật thể dự bị của lane
 		x = rand() % (BOARD_GAME_RIGHT - BOARD_GAME_LEFT - 1) + (BOARD_GAME_LEFT + 1);
 		direc = i % 2 == 0 ? LEFT : RIGHT;
 		vector<Obstacle*> v;
-
+	
 		switch (arr[i])
 		{
 		case 1:
-			for (int i = 0; i < n; i++) {
-				obs = new Car(x, height, direc);
+			v.push_back(new Car(0, 0, direc));
+			for (int i = 1; i < n; i++) {
+				obs = new Car(x, height + 1, direc);
 				v.push_back(obs);
 
 				if (direc == LEFT) {
@@ -84,8 +85,10 @@ void Game::Init()
 
 		case 2:
 			n *= 2;
-			for (int i = 0; i < n; i++) {
-				obs = new Bird(x, height, direc);
+			v.push_back(new Bird(0, 0, direc));
+
+			for (int i = 1; i < n; i++) {
+				obs = new Bird(x, height + 1, direc);
 				v.push_back(obs);
 
 				if (direc == LEFT) {
@@ -101,8 +104,10 @@ void Game::Init()
 			break;
 
 		case 3:
-			for (int i = 0; i < n; i++) {
-				obs = new Truck(x, height, direc);
+			v.push_back(new Truck(0, 0, direc));
+
+			for (int i = 1; i < n; i++) {
+				obs = new Truck(x, height + 1, direc);
 				v.push_back(obs);
 
 				if (direc == LEFT) {
@@ -118,8 +123,10 @@ void Game::Init()
 			break;
 
 		case 4:
-			for (int i = 0; i < n; i++) {
-				obs = new Dinosaur(x, height, direc);
+			v.push_back(new Dinosaur(0, 0, direc));
+
+			for (int i = 1; i < n; i++) {
+				obs = new Dinosaur(x, height + 1, direc);
 				v.push_back(obs);
 
 				if (direc == LEFT) {
@@ -141,21 +148,30 @@ void Game::Init()
 	}
 
 	people = People((BOARD_GAME_LEFT + BOARD_GAME_RIGHT) / 2, BOARD_GAME_BOTTOM - people.Height());
+
 }
 
 void Game::Run()
 {
-	thread t(&Game::ThreadFunct, this);
-
 	PrintPeople();
+	t = thread(&Game::ThreadFunct, this);
+
 	while (true) {
 
 		char ch = toupper(_getch());
 		if (ch == 'A' || ch == 'D' || ch == 'S' || ch == 'W') {
+
 			UpdatePosPeople(ch);
+
+			lock_guard<mutex> lock(theLock);
+			PrintPeople();
 		}
-		lock_guard<mutex> lock(theLock);
-		PrintPeople();
+		else if (ch=='P') {
+			PauseGame();
+		}
+		else if (ch =='S') {
+			SuspendThread(t.native_handle());
+		}
 	}
 }
 
@@ -166,16 +182,49 @@ void Game::ThreadFunct()
 		//pos = GetCursorPosition();
 
 		UpdatePosObstacle();
+
 		lock_guard<mutex> *lock = new lock_guard<mutex>(theLock);
 		PrintObstacle();
+
+		if (IsImpact()) {
+			ProcessDead();
+		}
+
 		PrintSeparator();
+
 		delete lock;
-		Sleep(25);
+		Sleep(SLEEP_TIME);
 	}
 }
 
 void Game::ResetGame()
 {
+
+}
+
+void Game::PauseGame()
+{
+	lock_guard<mutex> lock(theLock);
+	SuspendThread(t.native_handle());
+	ClearBoard();
+
+	SetConsoleFontSize({ bigFontSizeW, bigFontSizeH }, L"Consolas");
+	FixConsoleWindow(CONSOLE_MENU_WIDTH, CONSOLE_MENU_HEIGHT);
+
+	menu.Set("pause");
+	menu.Print();
+	string select = menu.Select();
+
+	if (select == "CONTINUE") {
+		menu.Erase();
+		SetConsoleFontSize({ smallFontSizeW, smallFontSizeH }, L"Lucida Console");
+		FixConsoleWindow(CONSOLE_MAX_WIDTH, CONSOLE_MAX_HEIGHT);
+		DrawBoard();
+		PrintPeople();
+		//delete lock;
+		ResumeThread(t.native_handle());
+	}
+
 }
 
 void Game::ExitGame(HANDLE)
@@ -189,13 +238,14 @@ void Game::StartGame()
 	SetConsoleFontSize({ bigFontSizeW, bigFontSizeH }, L"Consolas");
 	FixConsoleWindow(CONSOLE_MENU_WIDTH, CONSOLE_MENU_HEIGHT);
 
-	string select = menu.Select();
+	const string select = menu.Select();
 	menu.EraseMenu();
 
 
 	if (select == "NEW GAME") {
 		SetConsoleFontSize({ smallFontSizeW,smallFontSizeH }, L"Lucida Console");
 		FixConsoleWindow(CONSOLE_MAX_WIDTH, CONSOLE_MAX_HEIGHT);
+		DrawBoard();
 		Init();
 		Run();
 	}
@@ -237,6 +287,67 @@ void Game::UpdatePosObstacle()
 	}
 }
 
+bool Game::IsImpact()
+{
+	const short people_top = people.GetPosition().Y;
+	const short people_bot = people.GetPosition().Y + people.Height() - 1;
+
+	if (people_bot <= lane[0].GetPos().Y) {
+		return false;
+	}
+
+	if (people_top > lane[MAX_LANE - 1].GetPos().Y + lane[MAX_LANE - 1].Height()) {
+		return false;
+	}
+
+	for (int i = 0; i < MAX_LANE; i++) {
+
+		const short lane_top = lane[i].GetPos().Y;
+		const short lane_bot = lane[i].GetPos().Y + lane[i].Height() - 1;
+
+		if (lane_top >= people_bot) {
+			break;
+		}
+
+		if ((people_top >= lane_top && people_top <= lane_bot)
+			|| (people_bot > lane_top && people_bot <= lane_bot)) {
+			
+			if (lane[i].IsImpact(people)) {
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
+void Game::ProcessDead()
+{
+	const clock_t begin = clock();
+	const int delay_time = 1;
+
+	Sleep(2000);
+
+	ClearBoard();
+	SetConsoleFontSize({ bigFontSizeW, bigFontSizeH }, L"Consolas");
+	FixConsoleWindow(CONSOLE_MENU_WIDTH, CONSOLE_MENU_HEIGHT);
+
+	menu.Set("lose");
+	menu.Print();
+	string select = menu.Select();
+
+	if (select == "RESTART") {
+
+		SetConsoleFontSize({ smallFontSizeW,smallFontSizeH }, L"Lucida Console");
+		FixConsoleWindow(CONSOLE_MAX_WIDTH, CONSOLE_MAX_HEIGHT);
+		menu.Erase();
+		DrawBoard();
+
+		lane.clear();
+		this->Init();
+	}
+}
+
 void Game::PrintObstacle()
 {
 	int n = lane.size();
@@ -256,16 +367,19 @@ void Game::PrintSeparator()
 {
 	int y = HEIGHT_OFFSET + 1 + SIDE_WALK_HEIGHT;
 	string s[9];
-	COORD peoplePos = people.GetPosition();
+	const short people_top = people.GetPosition().Y;
+	const short people_bot = people_top + people.Height() - 1;
+	const short people_left = people.GetPosition().X;
+	const short people_right = people_left + people.Width() - 1;
 
 	for (int k = 0; k < 9; k++) {
 		if (k == 0 || k == 8) {
-			if (peoplePos.Y <= y && peoplePos.Y + people.Height() - 1 >= y) {
-				for (int i = BOARD_GAME_LEFT + 1; i < peoplePos.X; i++) {
+			if (people_top <= y && people_bot >= y) {
+				for (int i = BOARD_GAME_LEFT + 1; i < people_left; i++) {
 					s[k] += '_';
 				}
-				s[k] += people.GetFigure().Get()[y - peoplePos.Y];
-				for (int i = peoplePos.X + people.Width(); i < BOARD_GAME_RIGHT; i++) {
+				s[k] += people.GetFigure().Get()[y - people_top];
+				for (int i = people_right + 1; i < BOARD_GAME_RIGHT; i++) {
 					s[k] += '_';
 				}
 			}
@@ -276,12 +390,12 @@ void Game::PrintSeparator()
 			}
 		}
 		else {
-			if (peoplePos.Y <= y && peoplePos.Y + people.Height() - 1 >= y) {
-				for (int i = BOARD_GAME_LEFT + 1; i < peoplePos.X; i++) {
+			if (people_top <= y && people_bot >= y) {
+				for (int i = BOARD_GAME_LEFT + 1; i < people_left; i++) {
 					s[k] += i % 2 == 0 ? '_' : ' ';
 				}
-				s[k] += people.GetFigure().Get()[y - peoplePos.Y];
-				for (int i = peoplePos.X + people.Width(); i < BOARD_GAME_RIGHT; i++) {
+				s[k] += people.GetFigure().Get()[y - people_top];
+				for (int i = people_right + 1; i < BOARD_GAME_RIGHT; i++) {
 					s[k] += i % 2 == 0 ? '_' : ' ';
 				}
 			}
@@ -293,7 +407,7 @@ void Game::PrintSeparator()
 		}
 
 		if (k < 8) {
-			y = lane[k].GetPos().Y + lane[k].Height() - 1;
+			y = lane[k].GetPos().Y + lane[k].Height();
 		}
 	}
 	
@@ -302,7 +416,20 @@ void Game::PrintSeparator()
 		GotoXY(BOARD_GAME_LEFT + 1, y);
 		printf("%s", s[i].c_str());
 		if (i < 8) {
-			y = lane[i].GetPos().Y + lane[i].Height() - 1;
+			y = lane[i].GetPos().Y + lane[i].Height();
 		}
+	}
+}
+
+void Game::ClearBoard() const
+{
+	string s;
+	for (int i = BOARD_LEFT_EDGE; i <= BOARD_RIGHT_EDGE; i++) {
+		s += ' ';
+	}
+
+	for (int i = BOARD_TOP_EDGE; i <= BOARD_BOTTOM_EDGE; i++) {
+		GotoXY(BOARD_LEFT_EDGE, i);
+		printf("%s", s.c_str());
 	}
 }
