@@ -8,11 +8,18 @@
 #define CONSOLE_MAX_HEIGHT 70
 #define CONSOLE_MAX_WIDTH 200
 
-#define CONSOLE_MENU_HEIGHT 28
-#define CONSOLE_MENU_WIDTH	100
+#define smallFontSizeW (short)GetSystemMetrics(SM_CXSCREEN)/CONSOLE_MAX_WIDTH - 3	// = 6
+#define smallFontSizeH (short)GetSystemMetrics(SM_CYSCREEN)/CONSOLE_MAX_HEIGHT 	- 3	// = 12
 
+#define CONSOLE_MENU_HEIGHT 28		//28 23
+#define CONSOLE_MENU_WIDTH	100		//100 70
+
+#define bigFontSizeW (short)GetSystemMetrics(SM_CXSCREEN)/CONSOLE_MENU_WIDTH  - 2 		// = 17
+#define bigFontSizeH (short)GetSystemMetrics(SM_CYSCREEN)/CONSOLE_MENU_HEIGHT  - 2		// = 36
+// important: smallFontSizeW * CONSOLE_MAX_WIDTH == bigFontSizeW * CONSOLE_MENU_WIDTH
+//			&&smallFontSizeH * CONSOLE_MAX_HEIGHT == bigFontSizeH * CONSOLE_MENU_HEIGHT
 #define WIDTH_OFFSET 20
-#define HEIGHT_OFFSET 5
+#define HEIGHT_OFFSET 3
 
 #define BOARD_LEFT_EDGE WIDTH_OFFSET		// Cạnh trái của khung Game (x)
 #define BOARD_RIGHT_EDGE (CONSOLE_MAX_WIDTH - WIDTH_OFFSET - 1)		// Cạnh phải (x)
