@@ -32,6 +32,10 @@ int Lane::Height()
 void Lane::UpdatePos()
 {
 	int n = obs.size();
+	light.updateTimeNum();					//Cập nhật thời gian đếm ngược của đèn trước
+
+	if (light.isRedActivated() == false)		//đèn xanh thì phwong tiện đứng yên, người di chuyển!!!
+		return;
 
 	for (int i = 0; i < n; i++) {
 		obs[i]->Move();
@@ -48,6 +52,7 @@ void Lane::Print()
 
 
 	if (direc == RIGHT) {
+		light.print(this->pos.X, this->pos.Y);
 		for (int i = 1; i < n; i++) {
 
 			const short obs_left = obs[i]->GetPosition().X;
@@ -72,6 +77,7 @@ void Lane::Print()
 		}
 	}
 	else {
+		light.print(this->pos.X + width - 4, this->pos.Y);
 		for (int i = 1; i < n; i++) {
 
 			const short obs_left = obs[i]->GetPosition().X;
@@ -100,6 +106,11 @@ void Lane::Print()
 COORD Lane::GetPos()
 {
 	return pos;
+}
+
+TrafficLight& Lane::GetLight()
+{
+	return light;
 }
 
 bool Lane::IsImpact(People& people)

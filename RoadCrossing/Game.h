@@ -13,6 +13,7 @@
 #include "Truck.h"
 #include "Bird.h"
 #include "Dinosaur.h"
+#include "TrafficLight.h"
 #include "Menu.h"
 
 //test
@@ -27,6 +28,7 @@ using namespace std;
 #define DISTANCE 5
 #define SLEEP_TIME 25
 #define MAX_LANE 8
+
 
 class Game
 {

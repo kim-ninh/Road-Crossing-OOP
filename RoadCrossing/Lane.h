@@ -4,13 +4,14 @@
 
 #include "Obstacle.h"
 #include "People.h"
-
+#include "TrafficLight.h"
 class Lane
 {
 private:
 	int width, height;
 	COORD pos;
 	vector<Obstacle*> obs;
+	TrafficLight light;
 	Direction direc;
 public:
 	Lane();
@@ -21,6 +22,7 @@ public:
 	void Print();
 	COORD GetPos(People&);
 	COORD GetPos();
+	TrafficLight& GetLight();
 	bool IsImpact(People& people);
 };
 #endif // !_LANE_H

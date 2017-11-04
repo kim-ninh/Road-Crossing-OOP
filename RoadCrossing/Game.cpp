@@ -81,6 +81,7 @@ void Game::Init()
 
 			lanePos = { BOARD_GAME_LEFT + 1,height };
 			lane.push_back(Lane(lanePos, v, direc));
+			lane[lane.size() - 1].GetLight().Set(SLEEP_TIME);
 			break;
 
 		case 2:
@@ -101,6 +102,7 @@ void Game::Init()
 
 			lanePos = { BOARD_GAME_LEFT + 1,height };
 			lane.push_back(Lane(lanePos, v, direc));
+			lane[lane.size() - 1].GetLight().Set(0);
 			break;
 
 		case 3:
@@ -120,6 +122,7 @@ void Game::Init()
 
 			lanePos = { BOARD_GAME_LEFT + 1,height };
 			lane.push_back(Lane(lanePos, v, direc));
+			lane[lane.size() - 1].GetLight().Set(SLEEP_TIME);
 			break;
 
 		case 4:
@@ -139,6 +142,7 @@ void Game::Init()
 
 			lanePos = { BOARD_GAME_LEFT + 1,height };
 			lane.push_back(Lane(lanePos, v, direc));
+			lane[lane.size() - 1].GetLight().Set(0);
 			break;
 
 		}
