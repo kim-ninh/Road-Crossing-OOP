@@ -28,22 +28,20 @@ Menu::Menu()
 {
 	CONSOLE_H = CONSOLE_MENU_HEIGHT;
 	CONSOLE_W = CONSOLE_MENU_WIDTH;
-	//menuFig = Figure("Figure\\Menu.txt");
 	this->Set("main");
 	pastRow = 3;
-	currentRow = 4;		//Tiêu đề bắt đầu ở dòng thứ 2 từ trên xuống
-						//dòng đầu tiên là dòng 0
+	currentRow = 4;		//Tiêu đề bắt đầu ở dòng 4 từ trên xuống
+						//quy ước dòng đầu tiên là dòng 0 (mở Figure/Main_menu.txt sẽ rõ)
 }
 
 Menu::Menu(short consoleW, short consoleH)
 {
 	CONSOLE_H = consoleH;
 	CONSOLE_W = consoleW;
-	//menuFig = Figure("Figure\\Menu.txt");
 	this->Set("main");
 	pastRow = 3;
-	currentRow = 4;		//Tiêu đề bắt đầu ở dòng thứ 2 từ trên xuống
-						//dòng đầu tiên là dòng 0
+	currentRow = 4;		//Tiêu đề bắt đầu ở dòng 4 từ trên xuống
+						//quy ước dòng đầu tiên là dòng 0 (mở Figure/Main_menu.txt sẽ rõ)
 }
 
 void Menu::Erase()
@@ -82,7 +80,7 @@ void Menu::Set(const char * menuType)
 
 void Menu::Up()
 {
-	if (currentRow == 4)
+	if (currentRow == 4)						//xem dòng 38 Menu.cpp
 		return;
 	pastRow = currentRow;
 	currentRow--;
@@ -90,25 +88,10 @@ void Menu::Up()
 
 void Menu::Down()
 {
-	if (currentRow == menuFig.Height() - 1 - 4)
+	if (currentRow == menuFig.Height() - 1 - 4) //xem dòng 78 Menu.cpp
 		return;
 	pastRow = currentRow;
 	currentRow++;
-}
-
-void Menu::Enter() // truyền biến tiểu trình?
-{
-
-}
-
-void Menu::Control(char KEY)
-{
-	switch (KEY)
-	{
-	case'W': this->Up(); break;
-	case'S': this->Down(); break;
-	case 13: this->Enter(); break;		//Mã ASCII của Enter: 13
-	}
 }
 
 string Menu::Select()
@@ -121,10 +104,10 @@ string Menu::Select()
 		{
 		case'W': this->Up(); PlaySound("Sound\\sfx_menu_move4.wav", NULL, SND_ASYNC); break;
 		case'S': this->Down(); PlaySound("Sound\\sfx_menu_move4.wav", NULL, SND_ASYNC); break;
-		case 13:
+		case 13:	//             ====>>					 Mã ASCII của Enter: 13
 			TextColor(15);
 			PlaySound("Sound\\sfx_menu_select4.wav", NULL, SND_ASYNC);
-			return menuFig.Get()[currentRow];		//Mã ASCII của Enter: 13
+			return menuFig.Get()[currentRow];		
 		}
 
 		Print();
@@ -168,7 +151,7 @@ void Menu::Print()
 		}
 	}
 }
-// ===============  Testing Area =====================
+
 void Menu::PrintHelp()
 {
 	GotoXY(0, 0);
@@ -176,6 +159,18 @@ void Menu::PrintHelp()
 	TextColor(15);
 	for (int rowIndex = 0; rowIndex < helpSection.Height(); rowIndex++)
 		printf("%s\n", str[rowIndex].c_str());
+	
+	while (true)
+	{
+		if (_kbhit())
+		{
+			char ch = toupper(_getch());
+			if (ch == 27)	//Mã ASCII của ESC : 27
+			{
+				return;
+			}
+		}
+	}
 }
 
 void Menu::PrintAbout(short y)
@@ -202,6 +197,13 @@ void Menu::AboutAnimation()
 	TextColor(15);
 	while (true)
 	{
+		if (_kbhit())
+		{
+			char ch = toupper(_getch());
+			if (ch == 27)	//Mã ASCII của ESC : 27
+				return;
+		}
+
 		if (y + aboutSection.Height() == 0)
 			y = CONSOLE_H;
 		EraseAboutSection();
@@ -209,7 +211,6 @@ void Menu::AboutAnimation()
 
 		y--;
 		Sleep(400);
-
 	}
 }
 

@@ -1,6 +1,7 @@
 Instruction:
 
 How to control:
-Use 'A' 'D' 'W' 'S' to move the character from the side walk across the street.
+Use 'A' 'D' 'W' 'S' to move the character from the side walk across 
+the street.
 Don't let any vehicle or animal hit you or you will lose.
 Press Esc to exit

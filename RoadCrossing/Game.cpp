@@ -167,6 +167,7 @@ void Game::Run()
 			PrintPeople();
 		}
 		else if (ch=='P') {
+			PlaySound("Sound\\sfx_sounds_pause4_in.wav", NULL, SND_ASYNC);
 			PauseGame();
 		}
 		else if (ch =='S') {
@@ -213,18 +214,33 @@ void Game::PauseGame()
 
 	menu.Set("pause");
 	menu.Print();
-	string select = menu.Select();
 
+	pauseMenu:
+	string select = menu.Select();
+	menu.Erase();
 	if (select == "CONTINUE") {
-		menu.Erase();
+		
 		SetConsoleFontSize({ smallFontSizeW, smallFontSizeH }, L"Lucida Console");
 		FixConsoleWindow(CONSOLE_MAX_WIDTH, CONSOLE_MAX_HEIGHT);
 		DrawBoard();
 		PrintPeople();
 		//delete lock;
+		PlaySound("Sound\\sfx_sounds_pause4_out.wav", NULL, SND_ASYNC);
 		ResumeThread(t.native_handle());
 	}
+	if (select == "INSTRUCTION")
+	{
+		menu.PrintHelp();
+		menu.EraseHelpSection();
+		goto pauseMenu;
+	}
 
+	if (select == "ABOUT")
+	{
+		menu.AboutAnimation();
+		menu.EraseAboutSection();
+		goto pauseMenu;
+	}
 }
 
 void Game::ExitGame(HANDLE)
@@ -233,6 +249,7 @@ void Game::ExitGame(HANDLE)
 
 void Game::StartGame()
 {
+	mainMenu:
 	PlaySound("Sound\\TheFatRat_Unity.wav", NULL, SND_ASYNC);
 
 	SetConsoleFontSize({ bigFontSizeW, bigFontSizeH }, L"Consolas");
@@ -250,11 +267,20 @@ void Game::StartGame()
 		Run();
 	}
 
-	if (select == "INTRUCTION")
+	if (select == "INSTRUCTION")
+	{
 		menu.PrintHelp();
+		menu.EraseHelpSection();
+		goto mainMenu;
+	}
 
 	if (select == "ABOUT")
+	{
 		menu.AboutAnimation();
+		menu.EraseAboutSection();
+		goto mainMenu;
+	}
+
 }
 
 void Game::LoadGame(istream &)
