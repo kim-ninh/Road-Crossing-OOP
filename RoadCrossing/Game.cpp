@@ -691,7 +691,7 @@ void Game::ProcessDead()
 
 			SetConsoleFontSize({ smallFontSizeW,smallFontSizeH }, L"Lucida Console");
 			FixConsoleWindow(CONSOLE_MAX_WIDTH, CONSOLE_MAX_HEIGHT);
-			menu.Erase();
+			ClearConsole();
 			level = 1;
 			ResetGame();
 			DrawBoard();
