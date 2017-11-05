@@ -103,7 +103,11 @@ void Lane::Print()
 
 void Lane::Tell(People &people)
 {
-	if (IsInside(people) == true)
+	if (IsInside(people) == false)
+		return;
+
+	if ((!light.isRedActivated() && (obs[0]->GetType() == CAR || obs[0]->GetType() == TRUCK))
+		|| obs[0]->GetType() == BIRD || obs[0]->GetType() == DINOUSAUR)
 	{
 		if (timeCount % soundWaiting == 0)
 		{

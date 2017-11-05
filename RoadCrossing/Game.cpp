@@ -332,7 +332,7 @@ void Game::PauseGame()
 		menu.EraseMenu();
 
 		if (select == "CONTINUE") {
-			PlaySound("sfx_sounds_pause4_out.wav", NULL, SND_ASYNC);
+			PlaySound("Sound\\sfx_sounds_pause4_out.wav", NULL, SND_ASYNC);
 			SetConsoleFontSize({ smallFontSizeW, smallFontSizeH }, L"Lucida Console");
 			FixConsoleWindow(CONSOLE_MAX_WIDTH, CONSOLE_MAX_HEIGHT);
 			DrawBoard();
