@@ -75,7 +75,7 @@ void Lane::Print()
 		}
 	}
 	else {
-		light.print(this->pos.X + width - 4, this->pos.Y);
+		light.print(this->pos.X + width - 3, this->pos.Y);
 		for (int i = 1; i < n; i++) {
 
 			const short obs_left = obs[i]->GetPosition().X;
@@ -164,7 +164,11 @@ void Lane::Write(ostream& outDev)
 		obs[i]->Write(outDev);
 	}
 
+	outDev.write((char*)&light, sizeof(light));
 	outDev.write((char*)&direc, sizeof(direc));
+	outDev.write((char*)&sleepTime, sizeof(sleepTime));
+	outDev.write((char*)&timeCount, sizeof(timeCount));
+	outDev.write((char*)&soundWaiting, sizeof(soundWaiting));
 }
 
 void Lane::Read(istream& inDev)
@@ -212,7 +216,11 @@ void Lane::Read(istream& inDev)
 		obs[i]->Read(inDev);
 	}
 
+	inDev.read((char*)&light, sizeof(light));
 	inDev.read((char*)&direc, sizeof(direc));
+	inDev.read((char*)&sleepTime, sizeof(sleepTime));
+	inDev.read((char*)&timeCount, sizeof(timeCount));
+	inDev.read((char*)&soundWaiting, sizeof(soundWaiting));
 }
 
 void Lane::Deallocate()

@@ -32,13 +32,9 @@ void TrafficLight::print(short x, short y)
 				TextColor(BACKGROUND_LIGHTRED);
 		}
 		putchar(32);
-		TextColor(BACKGROUND_GREEN);
-		putchar(32);
 	}
 	else
 	{
-		TextColor(BACKGROUND_RED);
-		putchar(32);
 		if (warningStatus == false)
 			TextColor(BACKGROUND_LIGHTGREEN);
 		else

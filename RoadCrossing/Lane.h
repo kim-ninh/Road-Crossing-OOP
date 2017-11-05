@@ -18,7 +18,9 @@ public:
 	vector<Obstacle*> obs;
 	TrafficLight light;
 	Direction direc;
-	short sleepTime, timeCount, soundWaiting;
+	short sleepTime;
+	short timeCount;
+	short soundWaiting;
 public:
 	Lane();
 	Lane(COORD, vector<Obstacle*>, Direction, short, short);
@@ -26,7 +28,7 @@ public:
 	int Height();
 	void UpdatePos();
 	void Print();
-	void Tell(People &people);
+	void Tell(People &);
 	COORD GetPos(People&);
 	COORD GetPos();
 	TrafficLight& GetLight();
@@ -34,6 +36,6 @@ public:
 	void Write(ostream& outDev);
 	void Read(istream& inDev);
 	void Deallocate();
-	bool IsInside(People& people);
+	bool IsInside(People &);
 };
 #endif // !_LANE_H
