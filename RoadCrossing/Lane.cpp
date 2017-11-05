@@ -37,9 +37,9 @@ void Lane::UpdatePos()
 
 	light.updateTimeNum();					//Cập nhật thời gian đếm ngược của đèn trước
 
-	if (light.isRedActivated() == true)		
+	if (light.isRedActivated() == true)
 		return;
-											//đèn xanh thì phương tiện di chuyển
+	//đèn xanh thì phương tiện di chuyển
 	for (int i = 0; i < n; i++) {
 		obs[i]->Move();
 	}
