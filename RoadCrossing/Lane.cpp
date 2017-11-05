@@ -5,13 +5,16 @@ Lane::Lane()
 	width = BOARD_GAME_RIGHT - BOARD_GAME_LEFT + 1;
 }
 
-Lane::Lane(COORD coord, vector<Obstacle*> v, Direction theDirec)
+Lane::Lane(COORD coord, vector<Obstacle*> v, Direction theDirec, short SleepTime, short SoundWaiting)
 {
 	obs = v;
 	pos = coord;
 	direc = theDirec;
 	height = obs[0]->Height() + 1;
 	width = BOARD_GAME_RIGHT - BOARD_GAME_LEFT + 1;
+	sleepTime = SleepTime;
+	timeCount = 0;
+	soundWaiting = SoundWaiting;
 }
 
 Lane::~Lane()
@@ -98,6 +101,20 @@ void Lane::Print()
 	}
 }
 
+void Lane::Tell(People &people)
+{
+	if (IsInside(people) == true)
+	{
+		if (timeCount % soundWaiting == 0)
+		{
+			timeCount = 0;
+			obs[0]->Tell();
+		}
+
+		timeCount += sleepTime;
+	}
+}
+
 COORD Lane::GetPos()
 {
 	return pos;
@@ -135,7 +152,7 @@ void Lane::Write(ostream& outDev)
 {
 	int num;
 	ObstacleType type = obs[0]->GetType();
-	
+
 	outDev.write((char*)&type, sizeof(type));
 	outDev.write((char*)&width, sizeof(width));
 	outDev.write((char*)&height, sizeof(height));
@@ -162,7 +179,7 @@ void Lane::Read(istream& inDev)
 	num = obs.size();
 
 	inDev.read((char*)&num, sizeof(num));
-	obs.resize(num);			
+	obs.resize(num);
 
 	// allocate	'num' pointer to 'num' Obstacle object
 	switch (type)
@@ -207,4 +224,11 @@ void Lane::Deallocate()
 		}
 		obs.clear();
 	}
+}
+bool Lane::IsInside(People & people)
+{
+	COORD peoplePos = people.GetPosition();
+	if (pos.Y <= peoplePos.Y && peoplePos.Y < pos.Y + height)
+		return true;
+	return false;
 }

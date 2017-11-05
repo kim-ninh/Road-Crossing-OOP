@@ -28,6 +28,10 @@ using namespace std;
 #define DISTANCE 5
 #define SLEEP_TIME 25
 #define MAX_LANE 8
+#define CAR_SOUND_FREQ 4500			//4500
+#define TRUCK_SOUND_FREQ 2500		//4000
+#define BIRD_SOUND_FREQ	1000		//1500
+#define DINOSAUR_SOUND_FREQ 4000	//5000
 
 class Game
 {
@@ -67,6 +71,7 @@ public:
 	void PrintSeparator();
 	void ClearBoard() const;
 	void Deallocate();
+	void TellObstacle();
 };
 
 #endif // !_GAME_H

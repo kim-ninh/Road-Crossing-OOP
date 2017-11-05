@@ -99,7 +99,7 @@ void Game::Init()
 		x = rand() % (BOARD_GAME_RIGHT - BOARD_GAME_LEFT - 1) + (BOARD_GAME_LEFT + 1);
 		direc = i % 2 == 0 ? LEFT : RIGHT;
 		vector<Obstacle*> v;
-	
+
 		switch (arr[i])
 		{
 		case 1:
@@ -117,7 +117,7 @@ void Game::Init()
 			}
 
 			lanePos = { BOARD_GAME_LEFT + 1,height };
-			lane.push_back(Lane(lanePos, v, direc));
+			lane.push_back(Lane(lanePos, v, direc, SLEEP_TIME, CAR_SOUND_FREQ));
 			lane[lane.size() - 1].GetLight().Set(SLEEP_TIME);
 			break;
 
@@ -138,7 +138,7 @@ void Game::Init()
 			}
 
 			lanePos = { BOARD_GAME_LEFT + 1,height };
-			lane.push_back(Lane(lanePos, v, direc));
+			lane.push_back(Lane(lanePos, v, direc, SLEEP_TIME, BIRD_SOUND_FREQ));
 			lane[lane.size() - 1].GetLight().Set(0);
 			break;
 
@@ -158,7 +158,7 @@ void Game::Init()
 			}
 
 			lanePos = { BOARD_GAME_LEFT + 1,height };
-			lane.push_back(Lane(lanePos, v, direc));
+			lane.push_back(Lane(lanePos, v, direc, SLEEP_TIME, TRUCK_SOUND_FREQ));
 			lane[lane.size() - 1].GetLight().Set(SLEEP_TIME);
 			break;
 
@@ -178,7 +178,7 @@ void Game::Init()
 			}
 
 			lanePos = { BOARD_GAME_LEFT + 1,height };
-			lane.push_back(Lane(lanePos, v, direc));
+			lane.push_back(Lane(lanePos, v, direc, SLEEP_TIME, DINOSAUR_SOUND_FREQ));
 			lane[lane.size() - 1].GetLight().Set(0);
 
 			break;
@@ -246,10 +246,11 @@ void Game::ThreadFunct()
 		lock_guard<mutex> *lock = new lock_guard<mutex>(theLock);
 		PrintSeparator();
 		PrintObstacle();
+		TellObstacle();
 
 		if (IsImpact()) {
 			people.SetStage(false);
-			
+
 			try
 			{
 				ProcessDead();
@@ -284,7 +285,7 @@ void Game::PauseGame()
 	char ch;
 
 	menu.Set("pause");
-	
+
 	while (true)
 	{
 		select = menu.Select();
@@ -402,7 +403,7 @@ void Game::StartGame()
 		}
 		else if (select == "INSTRUCTION") {
 			menu.PrintHelp();
-			
+
 			do
 			{
 				ch = _getch();
@@ -451,7 +452,7 @@ void Game::LoadGame()
 	{
 		GotoXY(x, y);
 		printf("Enter data's name: ");
-		
+
 		GotoXY(x + strlen("Enter data's name: ") / 3, y + 1);
 		// hiện con trỏ trước khi nhập
 		info.dwSize = 100;
@@ -528,7 +529,7 @@ void Game::SaveGame()
 
 		// hiện con trỏ trước khi nhập
 		info.dwSize = 100;
-		info.bVisible = TRUE;					
+		info.bVisible = TRUE;
 		SetConsoleCursorInfo(ConsoleHandle, &info);
 
 		TextColor(FOREGROUND_GREEN);
@@ -537,7 +538,7 @@ void Game::SaveGame()
 
 		// ẩn con trỏ sau khi nhập
 		info.bVisible = FALSE;
-		SetConsoleCursorInfo(ConsoleHandle, &info);	
+		SetConsoleCursorInfo(ConsoleHandle, &info);
 
 		path += fileName;
 		if (IsExistFile(path.c_str()))		// file đã tồn tại
@@ -563,7 +564,7 @@ void Game::SaveGame()
 
 	m.Erase();		// xóa menu
 
-	// mở file và bắt đầu ghi
+					// mở file và bắt đầu ghi
 	ofstream outFile(path, ios::binary);
 	num = lane.size();
 
@@ -583,7 +584,7 @@ void Game::SaveGame()
 	printf("Saved!");
 	GotoXY((width - strlen("Press 'Enter' key to go back to the Main Menu"))/2, pos.Y + 6);
 	printf("Press 'Enter' key to go back to the Main Menu");
-	
+
 	while (_getch() != 13);		// chờ nhấn Enter
 	ClearConsole();
 }
@@ -600,7 +601,7 @@ void Game::LevelUp()
 	ClearBoard();
 	SuspendThread(t.native_handle());
 	Deallocate();
-	
+
 	level = (level == MAX_LEVEL) ? 1 : ++level;
 	Init();
 	PrintLevel();
@@ -655,7 +656,7 @@ bool Game::IsImpact()
 
 		if ((people_top >= lane_top && people_top <= lane_bot)
 			|| (people_bot > lane_top && people_bot <= lane_bot)) {
-			
+
 			if (lane[i].IsImpact(people)) {
 				return true;
 			}
@@ -772,7 +773,7 @@ void Game::PrintSeparator()
 			y = lane[k].GetPos().Y + lane[k].Height();
 		}
 	}
-	
+
 	y = HEIGHT_OFFSET + 1 + SIDE_WALK_HEIGHT;
 	for (int i = 0; i < 9; i++) {
 		GotoXY(BOARD_GAME_LEFT + 1, y);
@@ -811,4 +812,12 @@ void Game::Deallocate()
 		}
 		lane.clear();
 	}
+}
+
+void Game::TellObstacle()
+{
+	int n = lane.size();
+
+	for (int i = 0; i < n; i++)
+		lane[i].Tell(people);
 }
