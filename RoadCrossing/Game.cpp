@@ -652,14 +652,12 @@ void Game::SaveGame()
 	string path = "Saved\\";
 
 	HANDLE ConsoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
-	CONSOLE_SCREEN_BUFFER_INFO csbi;
 	CONSOLE_CURSOR_INFO info;
 
+	SMALL_RECT rect = GetWindowSize();
+	width = rect.Right - rect.Left + 1;
 	COORD pos;
-	GetConsoleScreenBufferInfo(ConsoleHandle, &csbi);		// lấy thông tin kích thước cửa sở và buffer của console
-															// ở đây chỉ quan tâm kích thước cửa sổ
-	width = csbi.srWindow.Right - csbi.srWindow.Left + 1;
-	pos.Y = (csbi.srWindow.Bottom) / 3 - 5;
+	pos.Y = (rect.Bottom) / 3 - 5;
 	pos.X = (width - strlen("File is already exist! Overwrite?")) / 2;
 
 
