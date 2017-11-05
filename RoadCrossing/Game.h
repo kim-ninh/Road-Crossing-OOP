@@ -45,6 +45,7 @@ public:
 
 	bool IsExistFile(const char *fileName);
 	void PrintLevel();
+	void PrintMessage(string);
 	vector<string> GetFileName(const char *path);
 public:
 	Game();

@@ -16,7 +16,7 @@
 #define CONSOLE_MENU_HEIGHT 23		//28 23
 #define CONSOLE_MENU_WIDTH	70		//100 70
 
-#define bigFontSizeW (short)GetSystemMetrics(SM_CXSCREEN)/CONSOLE_MENU_WIDTH  - 10 		// = 17
+#define bigFontSizeW (short)GetSystemMetrics(SM_CXSCREEN)/CONSOLE_MENU_WIDTH  - 10		// = 17
 #define bigFontSizeH (short)GetSystemMetrics(SM_CYSCREEN)/CONSOLE_MENU_HEIGHT  - 10		// = 36
 // important: smallFontSizeW * CONSOLE_MAX_WIDTH == bigFontSizeW * CONSOLE_MENU_WIDTH
 //			&&smallFontSizeH * CONSOLE_MAX_HEIGHT == bigFontSizeH * CONSOLE_MENU_HEIGHT

@@ -40,6 +40,28 @@ void Game::PrintLevel()
 	TextColor(BACKGROUND_BLACK | FOREGROUND_WHITE);
 }
 
+void Game::PrintMessage(string type)
+{
+	Figure fig;
+	if (type == "lose") {
+		fig = Figure("Figure\\YOULOSE");
+	}
+
+	SMALL_RECT rect = GetWindowSize();
+	int x = (rect.Right + 1 - fig.Width()) / 2;
+	int y = (rect.Bottom + 1 - fig.Height()) / 2;
+
+	TextColor(BACKGROUND_BLACK | FOREGROUND_LIGHTCYAN);		// set màu nền + màu text
+
+	ClearConsole();
+	fig.Print(x, y, false);
+	Sleep(2000);
+	ClearConsole();
+
+	// trả lại màu ban đầu
+	TextColor(BACKGROUND_BLACK | FOREGROUND_WHITE);
+}
+
 vector<string> Game::GetFileName(const char * path)
 {
 	vector<string> v;
@@ -225,6 +247,7 @@ void Game::Run()
 		else {
 			TerminateThread(t.native_handle(), 0);
 			t.join();
+			ClearConsole();
 			return StartGame();
 		}
 
@@ -260,7 +283,7 @@ void Game::ThreadFunct()
 
 		UpdatePosObstacle();
 
-		lock_guard<mutex> *lock = new lock_guard<mutex>(theLock);
+		lock_guard<mutex> lock(theLock);
 		PrintSeparator();
 		PrintObstacle();
 		TellObstacle();
@@ -275,12 +298,10 @@ void Game::ThreadFunct()
 			catch(string s)
 			{
 				if (s == "MAIN MENU");
-				delete lock;
 				return;
 			}
 		}
 
-		delete lock;
 		Sleep(SLEEP_TIME);
 	}
 }
@@ -835,6 +856,7 @@ void Game::ProcessDead()
 	const int delay_time = 1;
 
 	Sleep(2000);
+	PrintMessage("lose");
 
 	ClearConsole();
 	SetConsoleFontSize({ bigFontSizeW, bigFontSizeH }, L"Consolas");
