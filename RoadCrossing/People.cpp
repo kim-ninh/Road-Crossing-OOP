@@ -9,6 +9,7 @@ People::People(int x, int y)
 	mY = y;
 	COORD temp = { -1,-1 };
 	oldPos.push_back(temp);
+	oldPos.resize(3);
 }
 
 void People::Up()
@@ -108,7 +109,7 @@ bool People::IsFinish()
 
 bool People::IsDead()
 {
-	return false;
+	return mStage == false;
 }
 
 void People::Print()
@@ -157,4 +158,34 @@ int People::Height()
 		return f.Height();
 	}
 	return fig.Height();
+}
+
+void People::SetStage(bool stage)
+{
+	mStage = stage;
+}
+
+void People::Write(ostream& outDev)
+{
+	outDev.write((char*)&mX, sizeof(mX));
+	outDev.write((char*)&mY, sizeof(mY));
+	outDev.write((char*)&mStage, sizeof(mStage));
+
+	int num = oldPos.size();
+	outDev.write((char*)&num, sizeof(num));
+
+	outDev.write((char*)&oldPos[0], num * sizeof(oldPos[0]));
+}
+
+void People::Read(istream& inDev)
+{
+	inDev.read((char*)&mX, sizeof(mX));
+	inDev.read((char*)&mY, sizeof(mY));
+	inDev.read((char*)&mStage, sizeof(mStage));
+
+	int num;
+	inDev.read((char*)&num, sizeof(num));
+
+	oldPos.resize(num);
+	inDev.read((char*)&oldPos[0], num * sizeof(COORD));
 }

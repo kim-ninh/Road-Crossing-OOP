@@ -6,11 +6,11 @@ HCMUS K16 11/2017
 Sound Effect
  
 Juhani Junkala
- 
+ 	
  
 Graphic
  	
-ASCII Art
+ASCII Art 
 (http://www.chris.com/ascii/)
  
  

@@ -17,6 +17,7 @@ public:
 	const Figure& GetFigure();
 	const char * GetSoundFileName();
 	Obstacle * Clone(int, int);
+	ObstacleType GetType();
 };
 
 

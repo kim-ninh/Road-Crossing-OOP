@@ -39,3 +39,8 @@ Obstacle * Truck::Clone(int x, int y)
 {
 	return new Truck(x, y, direc);
 }
+
+ObstacleType Truck::GetType()
+{
+	return TRUCK;
+}

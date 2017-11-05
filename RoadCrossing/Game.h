@@ -13,8 +13,8 @@
 #include "Truck.h"
 #include "Bird.h"
 #include "Dinosaur.h"
-#include "TrafficLight.h"
 #include "Menu.h"
+#include <stdlib.h>
 
 //test
 #include <ctime>
@@ -22,22 +22,24 @@ using namespace std;
 
 
 #define MAXIMUM 8		// maximum number of stacles per lane
-#define MINIMUM	3		// minimum number of stacles per lane
+#define MINIMUM	2		// minimum number of stacles per lane
 #define MAX_LEVEL 4
 #define SIDE_WALK_HEIGHT 4		//  chiều cao vỉa hè
 #define DISTANCE 5
 #define SLEEP_TIME 25
 #define MAX_LANE 8
 
-
 class Game
 {
-private:
+public:
 	vector<Lane> lane;
 	People people;
 	int level;
 	Menu menu;
 	thread t;
+
+	bool IsExistFile(const char *fileName);
+	void PrintLevel();
 public:
 	Game();
 	void DrawGame();
@@ -48,10 +50,12 @@ public:
 	void ThreadFunct();
 	void ResetGame();
 	void PauseGame();
-	void ExitGame(HANDLE);
+	void ExitGame();
 	void StartGame();
-	void LoadGame(istream&);
+	void LoadGame();
 	void SaveGame();
+	bool IsLevelUp();
+	void LevelUp();
 	void PauseGame(HANDLE);
 	void ResumeGame(HANDLE);
 	void UpdatePosPeople(char MOVING);
@@ -62,7 +66,7 @@ public:
 	void PrintPeople();
 	void PrintSeparator();
 	void ClearBoard() const;
+	void Deallocate();
 };
-
 
 #endif // !_GAME_H

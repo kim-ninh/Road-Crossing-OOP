@@ -18,7 +18,6 @@ private:
 	short currentRow;
 	short findMiddleH();
 	short findMiddleW(string menuTitle);
-	short findLongestStrPos(vector<string> text);
 public:
 	Menu();
 	Menu(short consoleW, short consoleH);
@@ -39,11 +38,13 @@ public:
 
 	//=======================Testing Function 
 	void PrintHelp();
-	void PrintAbout(short y);
+	void PrintAbout(short x, short y);
 	void AboutAnimation();
 	void EraseMenu();
 	void EraseHelpSection();
-	void EraseAboutSection();
+	void EraseAboutSection(short x, short y);
+	void Write(ostream&);
+	void Read(istream&);
 };
 
 #endif // !_MENU_H

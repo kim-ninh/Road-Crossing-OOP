@@ -4,7 +4,6 @@ W
  
 RESTART
 MAIN MENU
-QUIT
  
  
 S

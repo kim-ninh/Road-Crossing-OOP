@@ -4,10 +4,15 @@
 
 #include "Obstacle.h"
 #include "People.h"
+#include "Bird.h"
+#include "Car.h"
+#include "Dinosaur.h"
+#include "Truck.h"
 #include "TrafficLight.h"
+
 class Lane
 {
-private:
+public:
 	int width, height;
 	COORD pos;
 	vector<Obstacle*> obs;
@@ -24,5 +29,8 @@ public:
 	COORD GetPos();
 	TrafficLight& GetLight();
 	bool IsImpact(People& people);
+	void Write(ostream& outDev);
+	void Read(istream& inDev);
+	void Deallocate();
 };
 #endif // !_LANE_H

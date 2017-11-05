@@ -5,19 +5,20 @@
 
 #include <Windows.h>
 #include <cstdio>
+#include <string>
 
-#define CONSOLE_MAX_HEIGHT 70		//70  80
-#define CONSOLE_MAX_WIDTH 200		//200 228
+#define CONSOLE_MAX_HEIGHT 70
+#define CONSOLE_MAX_WIDTH 200
 
-#define smallFontSizeW (short)GetSystemMetrics(SM_CXSCREEN)/CONSOLE_MAX_WIDTH - 3	// = 6 //- 3
-#define smallFontSizeH (short)GetSystemMetrics(SM_CYSCREEN)/CONSOLE_MAX_HEIGHT 	- 3	// = 12 //-3
+#define smallFontSizeW (short)GetSystemMetrics(SM_CXSCREEN)/CONSOLE_MAX_WIDTH - 3	// = 6
+#define smallFontSizeH (short)GetSystemMetrics(SM_CYSCREEN)/CONSOLE_MAX_HEIGHT 	- 3	// = 12
 
-#define CONSOLE_MENU_HEIGHT 23		//28 23 23
-#define CONSOLE_MENU_WIDTH	70		//100 70 66
+#define CONSOLE_MENU_HEIGHT 28		//28 23
+#define CONSOLE_MENU_WIDTH	100		//100 70
 
-#define bigFontSizeW (short)GetSystemMetrics(SM_CXSCREEN)/CONSOLE_MENU_WIDTH  -  10		// = 17  //-10
-#define bigFontSizeH (short)GetSystemMetrics(SM_CYSCREEN)/CONSOLE_MENU_HEIGHT  - 10		// = 36	 //-10
-// important: smallFontSizeW * CONSOLE_MAX_WIDTH == bigFontSizeW * CONSOLE_MENU_WIDTH			// ~1200
+#define bigFontSizeW (short)GetSystemMetrics(SM_CXSCREEN)/CONSOLE_MENU_WIDTH  - 2 		// = 17
+#define bigFontSizeH (short)GetSystemMetrics(SM_CYSCREEN)/CONSOLE_MENU_HEIGHT  - 2		// = 36
+// important: smallFontSizeW * CONSOLE_MAX_WIDTH == bigFontSizeW * CONSOLE_MENU_WIDTH
 //			&&smallFontSizeH * CONSOLE_MAX_HEIGHT == bigFontSizeH * CONSOLE_MENU_HEIGHT
 
 #define WIDTH_OFFSET 20
@@ -36,6 +37,7 @@
 #pragma region Color
 // DOS colors; you can use these values if you don't wish to bitwise OR the
 // blue-red-green-intensity bits yourself
+
 #define FOREGROUND_BLACK        0x0000  // text color is black
 #define FOREGROUND_BLUE         0x0001  // text color is blue
 #define FOREGROUND_GREEN        0x0002  // text color is green
@@ -78,5 +80,7 @@ void GotoXY(int, int);
 void GotoXY(COORD);
 COORD GetCursorPosition();
 void TextColor(short);
+void ClearConsole();
+SMALL_RECT GetWindowSize();
 
 #endif // !_CONSOLE_H

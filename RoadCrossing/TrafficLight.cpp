@@ -1,10 +1,9 @@
 ﻿#include "TrafficLight.h"
 
-
 TrafficLight::TrafficLight()
-{	
+{
 	countDown = RED_LIGHT_WAITING;
-	isRedLightActivated = true;	
+	isRedLightActivated = true;
 	warningStatus = false;
 	countingTime = 0;
 	blink = false;
@@ -17,7 +16,7 @@ void TrafficLight::Set(char sleep_time)
 
 void TrafficLight::print(short x, short y)
 {
-	if (this->delayTime == 0)				
+	if (this->delayTime == 0)
 		return;
 
 	GotoXY(x, y);
@@ -94,7 +93,7 @@ void TrafficLight::updateTimeNum()
 void TrafficLight::trafficAnimation(short x, short y)
 {
 
-	while(true)
+	while (true)
 	{
 		print(x, y);
 		updateTimeNum();

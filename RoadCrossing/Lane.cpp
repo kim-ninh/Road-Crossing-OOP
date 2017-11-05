@@ -3,7 +3,6 @@
 Lane::Lane()
 {
 	width = BOARD_GAME_RIGHT - BOARD_GAME_LEFT + 1;
-	height = obs[0]->Height() + 1;
 }
 
 Lane::Lane(COORD coord, vector<Obstacle*> v, Direction theDirec)
@@ -32,6 +31,7 @@ int Lane::Height()
 void Lane::UpdatePos()
 {
 	int n = obs.size();
+
 	light.updateTimeNum();					//Cập nhật thời gian đếm ngược của đèn trước
 
 	if (light.isRedActivated() == false)		//đèn xanh thì phwong tiện đứng yên, người di chuyển!!!
@@ -45,11 +45,6 @@ void Lane::UpdatePos()
 void Lane::Print()
 {
 	int n = obs.size();
-
-	//for (int i = 1; i < n; i++) {
-	//	obs[i]->Print();
-	//}
-
 
 	if (direc == RIGHT) {
 		light.print(this->pos.X, this->pos.Y);
@@ -134,4 +129,82 @@ bool Lane::IsImpact(People& people)
 	}
 
 	return false;
+}
+
+void Lane::Write(ostream& outDev)
+{
+	int num;
+	ObstacleType type = obs[0]->GetType();
+	
+	outDev.write((char*)&type, sizeof(type));
+	outDev.write((char*)&width, sizeof(width));
+	outDev.write((char*)&height, sizeof(height));
+	outDev.write((char*)&pos, sizeof(pos));
+	num = obs.size();
+
+	outDev.write((char*)&num, sizeof(num));
+	for (int i = 0; i < num; i++) {
+		obs[i]->Write(outDev);
+	}
+
+	outDev.write((char*)&direc, sizeof(direc));
+}
+
+void Lane::Read(istream& inDev)
+{
+	int num;
+	ObstacleType type;
+
+	inDev.read((char*)&type, sizeof(type));
+	inDev.read((char*)&width, sizeof(width));
+	inDev.read((char*)&height, sizeof(height));
+	inDev.read((char*)&pos, sizeof(pos));
+	num = obs.size();
+
+	inDev.read((char*)&num, sizeof(num));
+	obs.resize(num);			
+
+	// allocate	'num' pointer to 'num' Obstacle object
+	switch (type)
+	{
+	case BIRD:
+		for (int i = 0; i < num; i++) {
+			obs[i] = new Bird();
+		}
+		break;
+	case CAR:
+		for (int i = 0; i < num; i++) {
+			obs[i] = new Car();
+		}
+		break;
+	case DINOUSAUR:
+		for (int i = 0; i < num; i++) {
+			obs[i] = new Dinosaur();
+		}
+		break;
+	case TRUCK:
+		for (int i = 0; i < num; i++) {
+			obs[i] = new Truck();
+		}
+		break;
+	default:
+		break;
+	}
+
+	for (int i = 0; i < num; i++) {
+		obs[i]->Read(inDev);
+	}
+
+	inDev.read((char*)&direc, sizeof(direc));
+}
+
+void Lane::Deallocate()
+{
+	if (!obs.empty()) {
+		for (int i = 0; i < obs.size(); i++) {
+			delete obs[i];
+			obs[i] = nullptr;
+		}
+		obs.clear();
+	}
 }

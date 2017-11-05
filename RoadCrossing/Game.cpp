@@ -2,10 +2,47 @@
 #include "Game.h"
 
 
+bool Game::IsExistFile(const char* fileName)
+{
+	fstream inFile(fileName);
+
+	if (inFile)
+	{
+		inFile.close();
+		return true;
+	}
+
+	return false;
+}
+
+void Game::PrintLevel()
+{
+	string s = to_string(level);
+	Figure fig("Figure\\Level");
+
+	for (int i = 0; i < s.size(); i++) {
+		fig = fig + Figure((string("Figure\\") + s[i]).c_str());
+	}
+
+	SMALL_RECT rect = GetWindowSize();
+	int x = (rect.Right + 1 - fig.Width()) / 2;
+	int y = (rect.Bottom + 1 - fig.Height()) / 2;
+
+
+	TextColor(BACKGROUND_BLACK | FOREGROUND_LIGHTCYAN);		// set màu nền + màu text
+
+	ClearConsole();
+	fig.Print(x, y, false);
+	Sleep(2000);
+	ClearConsole();
+
+	// trả lại màu ban đầu
+	TextColor(BACKGROUND_BLACK | FOREGROUND_WHITE);
+}
 
 Game::Game()
 {
-	
+	level = 1;
 }
 
 void Game::DrawGame()
@@ -85,7 +122,7 @@ void Game::Init()
 			break;
 
 		case 2:
-			n *= 2;
+			n = 1 + (n - 1) * 2;
 			v.push_back(new Bird(0, 0, direc));
 
 			for (int i = 1; i < n; i++) {
@@ -143,6 +180,7 @@ void Game::Init()
 			lanePos = { BOARD_GAME_LEFT + 1,height };
 			lane.push_back(Lane(lanePos, v, direc));
 			lane[lane.size() - 1].GetLight().Set(0);
+
 			break;
 
 		}
@@ -152,30 +190,47 @@ void Game::Init()
 	}
 
 	people = People((BOARD_GAME_LEFT + BOARD_GAME_RIGHT) / 2, BOARD_GAME_BOTTOM - people.Height());
-
+	people.SetStage(true);
 }
 
 void Game::Run()
 {
 	PrintPeople();
 	t = thread(&Game::ThreadFunct, this);
+	char ch;
 
 	while (true) {
 
-		char ch = toupper(_getch());
+		if (!people.IsDead()) {
+			ch = toupper(_getch());
+		}
+		else {
+			TerminateThread(t.native_handle(), 0);
+			t.join();
+			return StartGame();
+		}
+
 		if (ch == 'A' || ch == 'D' || ch == 'S' || ch == 'W') {
 
-			UpdatePosPeople(ch);
-
 			lock_guard<mutex> lock(theLock);
+			UpdatePosPeople(ch);
 			PrintPeople();
+
+			if (IsLevelUp()) {
+				LevelUp();
+			}
 		}
-		else if (ch=='P') {
-			PlaySound("Sound\\sfx_sounds_pause4_in.wav", NULL, SND_ASYNC);
-			PauseGame();
-		}
-		else if (ch =='S') {
-			SuspendThread(t.native_handle());
+		else if (ch == 'P') {
+			try
+			{
+				PauseGame();
+			}
+			catch (string s)
+			{
+				if (s == "MAIN MENU") {
+					return StartGame();
+				}
+			}
 		}
 	}
 }
@@ -189,13 +244,23 @@ void Game::ThreadFunct()
 		UpdatePosObstacle();
 
 		lock_guard<mutex> *lock = new lock_guard<mutex>(theLock);
+		PrintSeparator();
 		PrintObstacle();
 
 		if (IsImpact()) {
-			ProcessDead();
+			people.SetStage(false);
+			
+			try
+			{
+				ProcessDead();
+			}
+			catch(string s)
+			{
+				if (s == "MAIN MENU");
+				delete lock;
+				return;
+			}
 		}
-
-		PrintSeparator();
 
 		delete lock;
 		Sleep(SLEEP_TIME);
@@ -211,88 +276,337 @@ void Game::PauseGame()
 {
 	lock_guard<mutex> lock(theLock);
 	SuspendThread(t.native_handle());
-	ClearBoard();
+	ClearConsole();
 
 	SetConsoleFontSize({ bigFontSizeW, bigFontSizeH }, L"Consolas");
 	FixConsoleWindow(CONSOLE_MENU_WIDTH, CONSOLE_MENU_HEIGHT);
+	string select;
+	char ch;
 
 	menu.Set("pause");
-	menu.Print();
-
-	pauseMenu:
-	string select = menu.Select();
-	menu.Erase();
-	if (select == "CONTINUE") {
-		
-		SetConsoleFontSize({ smallFontSizeW, smallFontSizeH }, L"Lucida Console");
-		FixConsoleWindow(CONSOLE_MAX_WIDTH, CONSOLE_MAX_HEIGHT);
-		DrawBoard();
-		PrintPeople();
-		//delete lock;
-		PlaySound("Sound\\sfx_sounds_pause4_out.wav", NULL, SND_ASYNC);
-		ResumeThread(t.native_handle());
-	}
-	if (select == "INSTRUCTION")
+	
+	while (true)
 	{
-		menu.PrintHelp();
-		menu.EraseHelpSection();
-		goto pauseMenu;
-	}
+		select = menu.Select();
+		menu.EraseMenu();
 
-	if (select == "ABOUT")
-	{
-		menu.AboutAnimation();
-		menu.EraseAboutSection();
-		goto pauseMenu;
+		if (select == "CONTINUE") {
+			SetConsoleFontSize({ smallFontSizeW, smallFontSizeH }, L"Lucida Console");
+			FixConsoleWindow(CONSOLE_MAX_WIDTH, CONSOLE_MAX_HEIGHT);
+			DrawBoard();
+			PrintPeople();
+			ResumeThread(t.native_handle());
+			break;
+		}
+		else if (select == "SAVE GAME") {
+			menu.Erase();
+			SaveGame();
+		}
+		else if (select == "LOAD GAME") {
+			this->LoadGame();
+			SetConsoleFontSize({ smallFontSizeW,smallFontSizeH }, L"Lucida Console");
+			FixConsoleWindow(CONSOLE_MAX_WIDTH, CONSOLE_MAX_HEIGHT);
+			DrawBoard();
+			PrintPeople();
+			ResumeThread(t.native_handle());
+			break;
+		}
+		else if (select == "INSTRUCTION") {
+			menu.PrintHelp();
+
+			do
+			{
+				ch = _getch();
+			} while (ch != 13);
+
+			ClearConsole();
+		}
+		else if (select == "MAIN MENU") {
+			ClearConsole();
+			Menu m;
+			m.Set("yes_no");
+
+			SMALL_RECT rect = GetWindowSize();
+			int width = rect.Right - rect.Left + 1;
+			int x = (width - strlen("Are you sure?")) / 2;
+			int y = (rect.Bottom) / 3 - 5;
+			GotoXY(x, y);
+			printf("Are you sure?");
+
+			string select = m.Select();
+
+			if (select == "NO") {
+				string s(strlen("Are you sure?"), ' ');
+				GotoXY(x, y);
+				printf("%s", s.c_str());
+			}
+			else {		// YES
+				TerminateThread(t.native_handle(), 0);
+				t.join();
+				Deallocate();				// deallocate before exit
+
+				throw string("MAIN MENU");
+			}
+		}
 	}
 }
 
-void Game::ExitGame(HANDLE)
+void Game::ExitGame()
 {
+	ClearConsole();
+	Menu m;
+	m.Set("yes_no");
+
+	SMALL_RECT rect = GetWindowSize();
+	int width = rect.Right - rect.Left + 1;
+	int x = (width - strlen("Are you sure?")) / 2;
+	int y = (rect.Bottom) / 3 - 5;
+	GotoXY(x, y);
+	printf("Are you sure?");
+
+	string select = m.Select();
+
+	if (select == "NO") {
+		string s(strlen("Are you sure?"), ' ');
+		GotoXY(x, y);
+		printf("%s", s.c_str());
+		return;
+	}
+
+	Deallocate();				// deallocate before exit
+	quick_exit(EXIT_SUCCESS);
 }
 
 void Game::StartGame()
 {
-	mainMenu:
 	PlaySound("Sound\\TheFatRat_Unity.wav", NULL, SND_ASYNC);
-
+	char ch;
+	string select;
+	menu = Menu();
 	SetConsoleFontSize({ bigFontSizeW, bigFontSizeH }, L"Consolas");
 	FixConsoleWindow(CONSOLE_MENU_WIDTH, CONSOLE_MENU_HEIGHT);
 
-	const string select = menu.Select();
-	menu.EraseMenu();
 
-
-	if (select == "NEW GAME") {
-		SetConsoleFontSize({ smallFontSizeW,smallFontSizeH }, L"Lucida Console");
-		FixConsoleWindow(CONSOLE_MAX_WIDTH, CONSOLE_MAX_HEIGHT);
-		DrawBoard();
-		Init();
-		Run();
-	}
-
-	if (select == "INSTRUCTION")
+	while (true)
 	{
-		menu.PrintHelp();
-		menu.EraseHelpSection();
-		goto mainMenu;
-	}
+		select = menu.Select();
+		menu.EraseMenu();
 
-	if (select == "ABOUT")
-	{
-		menu.AboutAnimation();
-		menu.EraseAboutSection();
-		goto mainMenu;
-	}
+		if (select == "NEW GAME") {
+			SetConsoleFontSize({ smallFontSizeW,smallFontSizeH }, L"Lucida Console");
+			FixConsoleWindow(CONSOLE_MAX_WIDTH, CONSOLE_MAX_HEIGHT);
+			PrintLevel();
+			DrawBoard();
+			Init();
+			return Run();
+		}
+		else if (select == "INSTRUCTION") {
+			menu.PrintHelp();
+			
+			do
+			{
+				ch = _getch();
+			} while (ch != 13);
+			ClearBoard();
+		}
+		else if (select == "ABOUT") {
+			menu.AboutAnimation();
 
+			do
+			{
+				ch = _getch();
+			} while (ch != 27);
+			ClearBoard();
+		}
+		else if (select == "LOAD GAME") {
+			this->LoadGame();
+			SetConsoleFontSize({ smallFontSizeW,smallFontSizeH }, L"Lucida Console");
+			FixConsoleWindow(CONSOLE_MAX_WIDTH, CONSOLE_MAX_HEIGHT);
+			DrawBoard();
+			return Run();
+		}
+		else if (select == "QUIT") {
+			ExitGame();
+		}
+	}
 }
 
-void Game::LoadGame(istream &)
+void Game::LoadGame()
 {
+	char fileName[50];
+	int num;
+	string path = "Saved\\";		// chứa đường dẫn tới file
+
+	HANDLE ConsoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
+	CONSOLE_SCREEN_BUFFER_INFO csbi;
+	CONSOLE_CURSOR_INFO info;
+
+	GetConsoleScreenBufferInfo(ConsoleHandle, &csbi);		// lấy thông tin kích thước cửa sở và buffer của console
+															// ở đây chỉ quan tâm kích thước cửa sổ
+	int width = csbi.srWindow.Right - csbi.srWindow.Left + 1;
+	int x = (width - strlen("Enter data's name: ")) / 2;
+	int y = (csbi.srWindow.Bottom) / 3 - 5;
+
+	while (true)
+	{
+		GotoXY(x, y);
+		printf("Enter data's name: ");
+		
+		GotoXY(x + strlen("Enter data's name: ") / 3, y + 1);
+		// hiện con trỏ trước khi nhập
+		info.dwSize = 100;
+		info.bVisible = TRUE;
+		SetConsoleCursorInfo(ConsoleHandle, &info);
+
+		TextColor(FOREGROUND_GREEN);
+		cin.getline(fileName, 50);
+		TextColor(FOREGROUND_WHITE);
+
+		// ẩn con trỏ sau khi nhập
+		info.bVisible = FALSE;
+		SetConsoleCursorInfo(ConsoleHandle, &info);
+
+		path += fileName;
+		if (!IsExistFile(path.c_str())) {
+			GotoXY((width - strlen("Data not found!")) / 2, y + 2);
+			printf("Data not found!");
+			Sleep(1000);
+			string s(strlen("Data not found!"), ' ');
+			GotoXY((width - strlen("Data not found!")) / 2, y + 2);
+			printf("%s", s.c_str());
+			s = string(strlen(fileName), ' ');
+			GotoXY(x + strlen("Enter data's name: ") / 3, y + 1);
+			printf("%s", s.c_str());
+			path = "Saved\\";
+		}
+		else {
+			break;
+		}
+	}
+
+	ifstream inFile(path, ios::binary);
+
+	inFile.read((char*)&num, sizeof(num));
+	lane.resize(num);
+
+	for (int i = 0; i < num; i++) {
+		lane[i].Read(inFile);
+	}
+
+	people.Read(inFile);
+	inFile.read((char*)&level, sizeof(level));
+	menu.Read(inFile);
+
+	inFile.close();
+	ClearConsole();
 }
 
 void Game::SaveGame()
 {
+	char fileName[51];
+	int num, width;
+	Menu m;
+	string path = "Saved\\";
+
+	HANDLE ConsoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
+	CONSOLE_SCREEN_BUFFER_INFO csbi;
+	CONSOLE_CURSOR_INFO info;
+
+	COORD pos;
+	GetConsoleScreenBufferInfo(ConsoleHandle, &csbi);		// lấy thông tin kích thước cửa sở và buffer của console
+															// ở đây chỉ quan tâm kích thước cửa sổ
+	width = csbi.srWindow.Right - csbi.srWindow.Left + 1;
+	pos.Y = (csbi.srWindow.Bottom) / 3 - 5;
+	pos.X = (width - strlen("File is already exist! Overwrite?")) / 2;
+
+	// kiểm tra trùng file.
+	while (true)
+	{
+		GotoXY(pos.X + strlen("File is already exist! Overwrite?") / 4, pos.Y);
+		printf("Input name to save: ");
+		GotoXY(pos.X + strlen("File is already exist! Overwrite?") / 3, pos.Y + 1);
+
+		// hiện con trỏ trước khi nhập
+		info.dwSize = 100;
+		info.bVisible = TRUE;					
+		SetConsoleCursorInfo(ConsoleHandle, &info);
+
+		TextColor(FOREGROUND_GREEN);
+		cin.getline(fileName, 50);
+		TextColor(FOREGROUND_WHITE);
+
+		// ẩn con trỏ sau khi nhập
+		info.bVisible = FALSE;
+		SetConsoleCursorInfo(ConsoleHandle, &info);	
+
+		path += fileName;
+		if (IsExistFile(path.c_str()))		// file đã tồn tại
+		{
+			int x = (width - strlen("File is already exist! Overwrite?")) / 2;
+			GotoXY(x, pos.Y + 2);
+			printf("File is already exist! Overwrite?");
+			m.Set("yes_no");
+			string select = m.Select();
+
+			if (select == "YES") {
+				break;
+			}
+			else {
+				ClearConsole();
+				path = "Saved\\";
+			}
+		}
+		else
+			break;
+	}
+
+
+	m.Erase();		// xóa menu
+
+	// mở file và bắt đầu ghi
+	ofstream outFile(path, ios::binary);
+	num = lane.size();
+
+	outFile.write((char*)&num, sizeof(num));
+	for (int i = 0; i < num; i++) {
+		lane[i].Write(outFile);
+	}
+
+	people.Write(outFile);
+	outFile.write((char*)&level, sizeof(level));
+	menu.Write(outFile);
+
+	outFile.close();
+
+	// thông báo đã lưu thành công
+	GotoXY((width - strlen("Saved!")) / 2, pos.Y + 5);
+	printf("Saved!");
+	GotoXY((width - strlen("Press 'Enter' key to go back to the Main Menu"))/2, pos.Y + 6);
+	printf("Press 'Enter' key to go back to the Main Menu");
+	
+	while (_getch() != 13);		// chờ nhấn Enter
+	ClearConsole();
+}
+
+bool Game::IsLevelUp()
+{
+	short people_bot = people.GetPosition().Y + people.Height() - 1;
+
+	return people_bot < HEIGHT_OFFSET + 1 + SIDE_WALK_HEIGHT;
+}
+
+void Game::LevelUp()
+{
+	ClearBoard();
+	SuspendThread(t.native_handle());
+	Deallocate();
+	
+	level = (level == MAX_LEVEL) ? 1 : ++level;
+	Init();
+	PrintLevel();
+	DrawBoard();
+	PrintPeople();
+	ResumeThread(t.native_handle());
 }
 
 void Game::PauseGame(HANDLE)
@@ -353,6 +667,7 @@ bool Game::IsImpact()
 
 void Game::ProcessDead()
 {
+
 	const clock_t begin = clock();
 	const int delay_time = 1;
 
@@ -363,18 +678,31 @@ void Game::ProcessDead()
 	FixConsoleWindow(CONSOLE_MENU_WIDTH, CONSOLE_MENU_HEIGHT);
 
 	menu.Set("lose");
-	menu.Print();
-	string select = menu.Select();
+	char ch;
+	string select;
 
-	if (select == "RESTART") {
+	while (true)
+	{
+		select = menu.Select();
+		menu.EraseMenu();
 
-		SetConsoleFontSize({ smallFontSizeW,smallFontSizeH }, L"Lucida Console");
-		FixConsoleWindow(CONSOLE_MAX_WIDTH, CONSOLE_MAX_HEIGHT);
-		menu.Erase();
-		DrawBoard();
+		if (select == "RESTART") {
 
-		lane.clear();
-		this->Init();
+			SetConsoleFontSize({ smallFontSizeW,smallFontSizeH }, L"Lucida Console");
+			FixConsoleWindow(CONSOLE_MAX_WIDTH, CONSOLE_MAX_HEIGHT);
+			menu.Erase();
+			DrawBoard();
+
+			lane.clear();
+			this->Init();
+			PrintPeople();
+			return;
+		}
+		else if (select == "MAIN MENU") {
+			Deallocate();
+
+			throw string("MAIN MENU");
+		}
 	}
 }
 
@@ -408,7 +736,9 @@ void Game::PrintSeparator()
 				for (int i = BOARD_GAME_LEFT + 1; i < people_left; i++) {
 					s[k] += '_';
 				}
-				s[k] += people.GetFigure().Get()[y - people_top];
+
+				s[k] += people.GetFigure().Get()[y - people_top];			// phần ký tự đè lên separator của people
+
 				for (int i = people_right + 1; i < BOARD_GAME_RIGHT; i++) {
 					s[k] += '_';
 				}
@@ -424,7 +754,9 @@ void Game::PrintSeparator()
 				for (int i = BOARD_GAME_LEFT + 1; i < people_left; i++) {
 					s[k] += i % 2 == 0 ? '_' : ' ';
 				}
-				s[k] += people.GetFigure().Get()[y - people_top];
+
+				s[k] += people.GetFigure().Get()[y - people_top];			// phần ký tự đè lên separator của people
+
 				for (int i = people_right + 1; i < BOARD_GAME_RIGHT; i++) {
 					s[k] += i % 2 == 0 ? '_' : ' ';
 				}
@@ -453,13 +785,30 @@ void Game::PrintSeparator()
 
 void Game::ClearBoard() const
 {
-	string s;
-	for (int i = BOARD_LEFT_EDGE; i <= BOARD_RIGHT_EDGE; i++) {
-		s += ' ';
-	}
+	//string s;
+	//for (int i = BOARD_LEFT_EDGE; i <= BOARD_RIGHT_EDGE; i++) {
+	//	s += ' ';
+	//}
 
-	for (int i = BOARD_TOP_EDGE; i <= BOARD_BOTTOM_EDGE; i++) {
-		GotoXY(BOARD_LEFT_EDGE, i);
+	//for (int i = BOARD_TOP_EDGE; i <= BOARD_BOTTOM_EDGE; i++) {
+	//	GotoXY(BOARD_LEFT_EDGE, i);
+	//	printf("%s", s.c_str());
+	//}
+
+	string s(BOARD_GAME_RIGHT - BOARD_GAME_LEFT + 1, ' ');		// constructor with duplicate a character n times
+
+	for (int i = BOARD_GAME_TOP; i <= BOARD_GAME_BOTTOM; i++) {
+		GotoXY(BOARD_GAME_LEFT, i);
 		printf("%s", s.c_str());
+	}
+}
+
+void Game::Deallocate()
+{
+	if (!lane.empty()) {
+		for (int i = 0; i < lane.size(); i++) {
+			lane[i].Deallocate();
+		}
+		lane.clear();
 	}
 }

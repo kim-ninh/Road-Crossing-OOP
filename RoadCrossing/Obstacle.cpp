@@ -135,6 +135,22 @@ void Obstacle::SetPosition(short x, short y)
 	mY = y;
 }
 
+void Obstacle::Write(ostream& outDev)
+{
+	outDev.write((char*)&mX, sizeof(mX));
+	outDev.write((char*)&mY, sizeof(mY));
+	outDev.write((char*)&oldX, sizeof(oldX));
+	outDev.write((char*)&direc, sizeof(direc));
+}
+
+void Obstacle::Read(istream& inDev)
+{
+	inDev.read((char*)&mX, sizeof(mX));
+	inDev.read((char*)&mY, sizeof(mY));
+	inDev.read((char*)&oldX, sizeof(oldX));
+	inDev.read((char*)&direc, sizeof(direc));
+}
+
 //bool Obstacle::IsImpact(People& people)
 //{
 //	vector<string> obs_fig = *(const_cast<vector<string>*>(this->GetFigure()).Get());

@@ -32,3 +32,8 @@ Obstacle * Bird::Clone(int x, int y)
 {
 	return new Bird(x, y, direc);
 }
+
+ObstacleType Bird::GetType()
+{
+	return BIRD;
+}

@@ -12,6 +12,10 @@ enum Direction {
 	LEFT, RIGHT
 };
 
+enum ObstacleType {
+	BIRD, CAR, DINOUSAUR, TRUCK
+};
+
 class Lane;
 
 class Obstacle
@@ -38,6 +42,9 @@ public:
 	bool IsImpact(People& people);
 	void SetPosition(short, short);
 	virtual Obstacle * Clone(int, int) = 0;
+	void Write(ostream& outDev);
+	void Read(istream& inDev);
+	virtual ObstacleType GetType() = 0;
 };
 
 #endif // !_OBSTACLE_H

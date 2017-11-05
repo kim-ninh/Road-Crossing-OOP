@@ -24,29 +24,6 @@ void FixConsoleWindow(int width, int height)
 	// Cố dịnh kích thước cửa sổ Console với một Size xác định
 	SMALL_RECT Rect = { 0,0,ConsoleBufferSize.X - 1,ConsoleBufferSize.Y - 1 };
 	SetConsoleWindowInfo(ConsoleHandle, TRUE, &Rect);
-
-
-	//for (int i = BOARD_GAME_TOP; i <= BOARD_GAME_BOTTOM; i++) {
-	//	GotoXY(WIDTH_OFFSET - 2, i);
-	//	printf("%d", i);
-	//	GotoXY(BOARD_GAME_RIGHT + 1, i);
-	//	printf("%d", i);
-	//}
-	//
-	//for (int i = BOARD_GAME_LEFT; i <= BOARD_GAME_RIGHT; i++) {
-	//	GotoXY(i, BOARD_GAME_TOP - 3);
-	//	printf("%d", i / 100);
-	//	GotoXY(i, BOARD_GAME_TOP - 2);
-	//	printf("%d", (i%100)/10);
-	//	GotoXY(i, BOARD_GAME_TOP - 1);
-	//	printf("%d", i % 10);
-	//	GotoXY(i, BOARD_GAME_BOTTOM + 1);
-	//	printf("%d", i/100);		
-	//	GotoXY(i, BOARD_GAME_BOTTOM + 2);
-	//	printf("%d", (i%100)/10);
-	//	GotoXY(i, BOARD_GAME_BOTTOM + 3);
-	//	printf("%d", i % 10);
-	//}
 }
 
 BOOL SetConsoleFontSize(COORD dwFontSize, const wchar_t *fontName) {
@@ -107,6 +84,29 @@ void DrawBoard(void)
 		GotoXY({ BOARD_RIGHT_EDGE, i });
 		printf("%c", 186);
 	}
+
+
+	//for (int i = BOARD_GAME_TOP; i <= BOARD_GAME_BOTTOM; i++) {
+	//	GotoXY(WIDTH_OFFSET - 2, i);
+	//	printf("%d", i);
+	//	GotoXY(BOARD_GAME_RIGHT + 1, i);
+	//	printf("%d", i);
+	//}
+	//
+	//for (int i = BOARD_GAME_LEFT; i <= BOARD_GAME_RIGHT; i++) {
+	//	GotoXY(i, BOARD_GAME_TOP - 3);
+	//	printf("%d", i / 100);
+	//	GotoXY(i, BOARD_GAME_TOP - 2);
+	//	printf("%d", (i%100)/10);
+	//	GotoXY(i, BOARD_GAME_TOP - 1);
+	//	printf("%d", i % 10);
+	//	GotoXY(i, BOARD_GAME_BOTTOM + 1);
+	//	printf("%d", i/100);		
+	//	GotoXY(i, BOARD_GAME_BOTTOM + 2);
+	//	printf("%d", (i%100)/10);
+	//	GotoXY(i, BOARD_GAME_BOTTOM + 3);
+	//	printf("%d", i % 10);
+	//}
 }
 
 void GotoXY(int x, int y)
@@ -140,4 +140,29 @@ COORD GetCursorPosition()
 void TextColor(short color)
 {
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color);
+}
+
+void ClearConsole()
+{
+	HANDLE ConsoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
+	CONSOLE_SCREEN_BUFFER_INFO csbi;
+
+	GetConsoleScreenBufferInfo(ConsoleHandle, &csbi);
+	
+	std::string s(csbi.srWindow.Right + 1, ' ');
+	for (int i = 0; i <= csbi.srWindow.Bottom - 1; i++) {
+		GotoXY(0, i);
+		printf("%s", s.c_str());
+	}
+}
+
+SMALL_RECT GetWindowSize()
+{
+	HANDLE ConsoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
+	CONSOLE_SCREEN_BUFFER_INFO csbi;
+	CONSOLE_CURSOR_INFO info;
+
+	GetConsoleScreenBufferInfo(ConsoleHandle, &csbi);		// lấy thông tin kích thước cửa sở và buffer của console
+															// ở đây chỉ quan tâm kích thước cửa sổ
+	return csbi.srWindow;
 }

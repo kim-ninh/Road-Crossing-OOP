@@ -31,3 +31,8 @@ Obstacle * Car::Clone(int x, int y)
 {
 	return new Car(x, y, direc);
 }
+
+ObstacleType Car::GetType()
+{
+	return	CAR;
+}

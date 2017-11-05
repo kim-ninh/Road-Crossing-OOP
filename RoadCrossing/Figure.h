@@ -28,11 +28,14 @@ public:
 	void Set(const char *file_name);
 	string Get(char *file_name);
 	vector<string>& Get();
-	void Print(COORD);
-	void Print(int, int);
+	void Print(COORD, bool edge = true);
+	void Print(int, int, bool edge = true);
 	void PrintIntro(COORD);
 	int Width();
 	int Height();
+	void Write(ostream&);
+	void Read(istream&);
+	Figure operator + (Figure& fig);
 };
 
 

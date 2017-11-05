@@ -33,3 +33,8 @@ Obstacle * Dinosaur::Clone(int x, int y)
 {
 	return new Dinosaur(x, y, direc);
 }
+
+ObstacleType Dinosaur::GetType()
+{
+	return DINOUSAUR;
+}

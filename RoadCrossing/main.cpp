@@ -23,6 +23,34 @@ using namespace std;
 //	delete ob;
 //}
 
+bool isExist(const char * filename)
+{
+	/*
+	Hàm kiểm tra file tồn tại hay chưa.
+	Trả về true nếu file đã tồn tại, false nếu chưa.
+	*/
+
+	fstream inFile(filename);
+
+	if (inFile)
+	{
+		inFile.close();
+		return true;
+	}
+
+	return false;
+}
+
+void ThreadFunct()
+{
+	int i = 0;
+
+	while (true) {
+		cout << i << endl;
+		Sleep(500);
+	}
+}
+
 int main() {
 
 #pragma region MyRegion
@@ -77,10 +105,12 @@ int main() {
 
 	
 	//PlaySound("Sound\\TheFatRat_Unity.wav", NULL, SND_LOOP);
-
 	Game game;
 	game.StartGame();
 
+	//Figure fig = Figure("Figure\\Level") + Figure("Figure\\1") + Figure("Figure\\2");
+	//fig.Print(0, 0, false);
+	
 
 	_getch();
 	return 0;

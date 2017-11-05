@@ -6,7 +6,7 @@
 
 class People
 {
-private:
+public:
 	int mX, mY;
 	bool mStage;		// true: sống, false: chết
 	static Figure fig;
@@ -27,5 +27,8 @@ public:
 	Figure& GetFigure();
 	int Width();
 	int Height();
+	void SetStage(bool);
+	void Write(ostream& outDev);
+	void Read(istream& inDev);
 };
 #endif // !_PEOPLE_H
