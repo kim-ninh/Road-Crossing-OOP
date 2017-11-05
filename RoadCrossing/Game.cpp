@@ -290,7 +290,7 @@ void Game::ThreadFunct()
 
 		if (IsImpact()) {
 			people.SetStage(false);
-			
+
 			try
 			{
 				ProcessDead();
@@ -323,6 +323,7 @@ void Game::PauseGame()
 	string select;
 	char ch;
 
+	PlaySound("Sound\\sfx_sounds_pause4_in.wav", NULL, SND_ASYNC);
 	menu.Set("pause");
 	
 	while (true)
@@ -331,6 +332,7 @@ void Game::PauseGame()
 		menu.EraseMenu();
 
 		if (select == "CONTINUE") {
+			PlaySound("sfx_sounds_pause4_out.wav", NULL, SND_ASYNC);
 			SetConsoleFontSize({ smallFontSizeW, smallFontSizeH }, L"Lucida Console");
 			FixConsoleWindow(CONSOLE_MAX_WIDTH, CONSOLE_MAX_HEIGHT);
 			DrawBoard();
@@ -854,7 +856,7 @@ void Game::ProcessDead()
 
 	const clock_t begin = clock();
 	const int delay_time = 1;
-
+	PlaySound("Sound\\sfx_deathscream_human4.wav", NULL, SND_ASYNC);
 	Sleep(2000);
 	PrintMessage("lose");
 
