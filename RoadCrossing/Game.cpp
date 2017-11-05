@@ -426,16 +426,11 @@ void Game::StartGame()
 			{
 				ch = _getch();
 			} while (ch != 13);
-			ClearBoard();
+			ClearConsole();
 		}
 		else if (select == "ABOUT") {
 			menu.AboutAnimation();
-
-			//do
-			//{
-			//	ch = _getch();
-			//} while (ch != 27);
-			ClearBoard();
+			ClearConsole();
 		}
 		else if (select == "LOAD GAME") {
 			this->LoadGame();
@@ -765,7 +760,7 @@ bool Game::IsLevelUp()
 
 void Game::LevelUp()
 {
-	ClearBoard();
+	ClearConsole();
 	SuspendThread(t.native_handle());
 	Deallocate();
 	
@@ -841,7 +836,7 @@ void Game::ProcessDead()
 
 	Sleep(2000);
 
-	ClearBoard();
+	ClearConsole();
 	SetConsoleFontSize({ bigFontSizeW, bigFontSizeH }, L"Consolas");
 	FixConsoleWindow(CONSOLE_MENU_WIDTH, CONSOLE_MENU_HEIGHT);
 
