@@ -15,7 +15,7 @@ private:
 	short delayTime;
 public:
 
-	TrafficLight();
+	TrafficLight(char sleep_time);
 	void Set(char sleep_time);
 	void print(short x, short y);
 	void updateTimeNum();

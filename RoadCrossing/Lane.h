@@ -16,7 +16,7 @@ public:
 	int width, height;
 	COORD pos;
 	vector<Obstacle*> obs;
-	TrafficLight light;
+	TrafficLight *light;
 	Direction direc;
 	short sleepTime;
 	short timeCount;
@@ -31,7 +31,6 @@ public:
 	void Tell(People &);
 	COORD GetPos(People&);
 	COORD GetPos();
-	TrafficLight& GetLight();
 	bool IsImpact(People& people);
 	void Write(ostream& outDev);
 	void Read(istream& inDev);

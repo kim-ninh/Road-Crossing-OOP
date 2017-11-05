@@ -1,12 +1,13 @@
 ﻿#include "TrafficLight.h"
 
-TrafficLight::TrafficLight()
+TrafficLight::TrafficLight(char sleep_time)
 {
 	countDown = RED_LIGHT_WAITING;
 	isRedLightActivated = false;
 	warningStatus = false;
 	countingTime = 0;
 	blink = false;
+	Set(sleep_time);
 }
 
 void TrafficLight::Set(char sleep_time)

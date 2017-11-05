@@ -15,6 +15,11 @@ Lane::Lane(COORD coord, vector<Obstacle*> v, Direction theDirec, short SleepTime
 	sleepTime = SleepTime;
 	timeCount = 0;
 	soundWaiting = SoundWaiting;
+
+	if (v[0]->GetType() == CAR || v[0]->GetType() == TRUCK)
+		light = new TrafficLight(SleepTime);
+	else
+		light = nullptr;
 }
 
 Lane::~Lane()
@@ -35,10 +40,14 @@ void Lane::UpdatePos()
 {
 	int n = obs.size();
 
-	light.updateTimeNum();					//Cập nhật thời gian đếm ngược của đèn trước
+	if (light != nullptr)
+	{
+		light->updateTimeNum();					//Cập nhật thời gian đếm ngược của đèn trước
 
-	if (light.isRedActivated() == true)
-		return;
+		if (light->isRedActivated() == true)
+			return;
+	}
+	
 	//đèn xanh thì phương tiện di chuyển
 	for (int i = 0; i < n; i++) {
 		obs[i]->Move();
@@ -50,7 +59,8 @@ void Lane::Print()
 	int n = obs.size();
 
 	if (direc == RIGHT) {
-		light.print(this->pos.X, this->pos.Y);
+		if (light != nullptr)
+			light->print(this->pos.X, this->pos.Y);
 		for (int i = 1; i < n; i++) {
 
 			const short obs_left = obs[i]->GetPosition().X;
@@ -75,7 +85,8 @@ void Lane::Print()
 		}
 	}
 	else {
-		light.print(this->pos.X + width - 3, this->pos.Y);
+		if (light != nullptr)
+			light->print(this->pos.X + width - 3, this->pos.Y);
 		for (int i = 1; i < n; i++) {
 
 			const short obs_left = obs[i]->GetPosition().X;
@@ -106,7 +117,7 @@ void Lane::Tell(People &people)
 	if (IsInside(people) == false)
 		return;
 
-	if ((!light.isRedActivated() && (obs[0]->GetType() == CAR || obs[0]->GetType() == TRUCK))
+	if ((light != nullptr && !light->isRedActivated() && (obs[0]->GetType() == CAR || obs[0]->GetType() == TRUCK))
 		|| obs[0]->GetType() == BIRD || obs[0]->GetType() == DINOUSAUR)
 	{
 		if (timeCount % soundWaiting == 0)
@@ -122,11 +133,6 @@ void Lane::Tell(People &people)
 COORD Lane::GetPos()
 {
 	return pos;
-}
-
-TrafficLight& Lane::GetLight()
-{
-	return light;
 }
 
 bool Lane::IsImpact(People& people)
@@ -220,7 +226,7 @@ void Lane::Read(istream& inDev)
 		obs[i]->Read(inDev);
 	}
 
-	inDev.read((char*)&light, sizeof(light));
+	inDev.read((char*)&*light, sizeof(light));
 	inDev.read((char*)&direc, sizeof(direc));
 	inDev.read((char*)&sleepTime, sizeof(sleepTime));
 	inDev.read((char*)&timeCount, sizeof(timeCount));
@@ -236,6 +242,8 @@ void Lane::Deallocate()
 		}
 		obs.clear();
 	}
+	delete light;
+	light = nullptr;
 }
 bool Lane::IsInside(People & people)
 {
