@@ -150,7 +150,7 @@ void ClearConsole()
 	GetConsoleScreenBufferInfo(ConsoleHandle, &csbi);
 	
 	std::string s(csbi.srWindow.Right + 1, ' ');
-	for (int i = 0; i <= csbi.srWindow.Bottom - 1; i++) {
+	for (int i = 0; i <= csbi.srWindow.Bottom; i++) {
 		GotoXY(0, i);
 		printf("%s", s.c_str());
 	}

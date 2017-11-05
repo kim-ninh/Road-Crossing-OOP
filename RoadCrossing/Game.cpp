@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "Game.h"
 
+bool Game::busy = false;
 
 bool Game::IsExistFile(const char* fileName)
 {
@@ -158,7 +159,6 @@ void Game::Init()
 
 			lanePos = { BOARD_GAME_LEFT + 1,height };
 			lane.push_back(Lane(lanePos, v, direc, SLEEP_TIME, CAR_SOUND_FREQ));
-
 			break;
 
 		case 2:
@@ -179,7 +179,6 @@ void Game::Init()
 
 			lanePos = { BOARD_GAME_LEFT + 1,height };
 			lane.push_back(Lane(lanePos, v, direc, SLEEP_TIME, BIRD_SOUND_FREQ));
-			
 			break;
 
 		case 3:
@@ -238,7 +237,6 @@ void Game::Run()
 	char ch;
 
 	while (true) {
-
 		if (!people.IsDead()) {
 			ch = toupper(_getch());
 		}
@@ -260,6 +258,8 @@ void Game::Run()
 			}
 		}
 		else if (ch == 'P') {
+			while (busy == true);
+
 			try
 			{
 				PauseGame();
@@ -280,12 +280,13 @@ void Game::ThreadFunct()
 	while (true) {
 
 		UpdatePosObstacle();
-
-		lock_guard<mutex> lock(theLock);
+		busy = true;
+		lock_guard<mutex> *lock = new lock_guard<mutex>(theLock);
 		PrintSeparator();
 		PrintObstacle();
 		TellObstacle();
-
+		delete lock;
+		busy = false;
 		if (IsImpact()) {
 			people.SetStage(false);
 
@@ -293,7 +294,7 @@ void Game::ThreadFunct()
 			{
 				ProcessDead();
 			}
-			catch(string s)
+			catch (string s)
 			{
 				if (s == "MAIN MENU");
 				return;
@@ -854,7 +855,9 @@ void Game::ProcessDead()
 
 	const clock_t begin = clock();
 	const int delay_time = 1;
+
 	PlaySound("Sound\\sfx_deathscream_human4.wav", NULL, SND_ASYNC);
+
 	Sleep(2000);
 	PrintMessage("lose");
 

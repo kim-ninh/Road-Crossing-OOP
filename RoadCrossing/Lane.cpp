@@ -47,7 +47,7 @@ void Lane::UpdatePos()
 		if (light->isRedActivated() == true)
 			return;
 	}
-	
+
 	//đèn xanh thì phương tiện di chuyển
 	for (int i = 0; i < n; i++) {
 		obs[i]->Move();
@@ -170,11 +170,14 @@ void Lane::Write(ostream& outDev)
 	num = obs.size();
 
 	outDev.write((char*)&num, sizeof(num));
+	if (type == CAR || type == TRUCK) {
+		outDev.write((char*)light, sizeof(TrafficLight));
+	}
+
 	for (int i = 0; i < num; i++) {
 		obs[i]->Write(outDev);
 	}
 
-	outDev.write((char*)&light, sizeof(light));
 	outDev.write((char*)&direc, sizeof(direc));
 	outDev.write((char*)&sleepTime, sizeof(sleepTime));
 	outDev.write((char*)&timeCount, sizeof(timeCount));
@@ -202,21 +205,33 @@ void Lane::Read(istream& inDev)
 		for (int i = 0; i < num; i++) {
 			obs[i] = new Bird();
 		}
+		
+		light = nullptr;
 		break;
 	case CAR:
 		for (int i = 0; i < num; i++) {
 			obs[i] = new Car();
 		}
+
+		light = new TrafficLight();
+		inDev.read((char*)light, sizeof(TrafficLight));
 		break;
+
 	case DINOUSAUR:
 		for (int i = 0; i < num; i++) {
 			obs[i] = new Dinosaur();
 		}
+		
+		light = nullptr;
 		break;
+
 	case TRUCK:
 		for (int i = 0; i < num; i++) {
 			obs[i] = new Truck();
 		}
+
+		light = new TrafficLight();
+		inDev.read((char*)light, sizeof(TrafficLight));
 		break;
 	default:
 		break;
@@ -226,7 +241,6 @@ void Lane::Read(istream& inDev)
 		obs[i]->Read(inDev);
 	}
 
-	inDev.read((char*)&*light, sizeof(light));
 	inDev.read((char*)&direc, sizeof(direc));
 	inDev.read((char*)&sleepTime, sizeof(sleepTime));
 	inDev.read((char*)&timeCount, sizeof(timeCount));

@@ -15,6 +15,10 @@ int main() {
 	Game game;
 	game.StartGame();
 	
+	//while (true) {
+	//	PlaySound("Sound\\Only My Railgun", NULL, SND_ASYNC);
+	//	Sleep(1000);
+	//}
 
 
 	_getch();

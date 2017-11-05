@@ -34,6 +34,7 @@ using namespace std::experimental::filesystem;
 #define BIRD_SOUND_FREQ	1000		//1500
 #define DINOSAUR_SOUND_FREQ 4000	//5000
 
+
 class Game
 {
 public:
@@ -42,7 +43,8 @@ public:
 	int level;
 	Menu menu;
 	thread t;
-
+	
+	static bool busy;
 	bool IsExistFile(const char *fileName);
 	void PrintLevel();
 	void PrintMessage(string);

@@ -1,5 +1,9 @@
 ﻿#include "TrafficLight.h"
 
+TrafficLight::TrafficLight()
+{
+}
+
 TrafficLight::TrafficLight(char sleep_time)
 {
 	countDown = RED_LIGHT_WAITING;
