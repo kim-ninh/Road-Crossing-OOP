@@ -3,7 +3,7 @@
 TrafficLight::TrafficLight()
 {
 	countDown = RED_LIGHT_WAITING;
-	isRedLightActivated = true;
+	isRedLightActivated = false;
 	warningStatus = false;
 	countingTime = 0;
 	blink = false;
