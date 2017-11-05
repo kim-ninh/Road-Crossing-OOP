@@ -1,8 +1,8 @@
 #pragma once
 #ifndef _TRAFFICLIGHT_H
 #define _TRAFFICLIGHT_H
-#define RED_LIGHT_WAITING 5 * 1000		//3 sec
-#define GREEN_LIGHT_WAITING 3 * 1000	//5 sec
+#define RED_LIGHT_WAITING 3 * 1000		//3 sec
+#define GREEN_LIGHT_WAITING 2 * 1000	//5 sec
 
 #include"Console.h"
 
