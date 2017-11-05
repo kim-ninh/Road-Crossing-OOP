@@ -97,11 +97,6 @@ void People::Move(char MOVING)
 	}
 }
 
-bool People::IsImpact(const Obstacle *&)
-{
-	return false;
-}
-
 bool People::IsFinish()
 {
 	return false;
@@ -117,7 +112,9 @@ void People::Print()
 	if (oldPos[0].X > 0) {
 		this->EraseOld();
 	}
+
 	fig.Print(mX, mY);
+
 }
 
 void People::EraseOld()

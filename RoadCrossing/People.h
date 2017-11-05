@@ -2,11 +2,12 @@
 #ifndef _PEOPLE_H
 #define _PEOPLE_H
 
-#include "Obstacle.h"
+#include "Figure.h"
+#include "Console.h"
 
 class People
 {
-public:
+private:
 	int mX, mY;
 	bool mStage;		// true: sống, false: chết
 	static Figure fig;
@@ -18,7 +19,6 @@ public:
 	void Right();
 	void Down();
 	void Move(char);
-	bool IsImpact(const Obstacle*&);
 	bool IsFinish();
 	bool IsDead();
 	void Print();

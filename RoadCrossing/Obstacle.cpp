@@ -129,6 +129,56 @@ COORD Obstacle::GetPosition()
 	return pos;
 }
 
+//bool Obstacle::IsImpact(People & people)
+//{
+//	vector<string> people_v = people.GetFigure().Get();
+//	vector<string> obs_v = const_cast<Figure&>(GetFigure()).Get();
+//
+//	short people_height = people.Height();
+//	short people_width = people.Width();
+//	short obs_height = this->Height();
+//	short obs_width = this->Width();
+//
+//	short people_left = people.GetPosition().X;
+//	short people_right = people_left + people_width - 1;
+//	short people_top = people.GetPosition().Y;
+//	short people_bot = people_top + people_height - 1;
+//
+//	short obs_left = this->GetPosition().X;
+//	short obs_right = obs_left + this->Width() - 1;
+//	short obs_top = this->GetPosition().Y;
+//	short obs_bot = obs_top + this->Height() - 1;
+//
+//	if (people_right < obs_right) {
+//		for (int i = 0; i < people_height; i++) {
+//			short people_y = people.GetPosition().Y + i;
+//
+//			for (int j = 0; j < obs_height; j++) {
+//				short obs_y = this->GetPosition().Y + j;
+//
+//				if (people_y == obs_y && obs_v[j][0] != ' ' && people_v[i][people_width - 1] != ' ') {
+//					return true;
+//				}
+//			}
+//		}
+//	}
+//	else if (people_right > obs_right) {
+//		for (int i = 0; i < people_height; i++) {
+//			short people_y = people.GetPosition().Y + i;
+//
+//			for (int j = 0; j < obs_height; j++) {
+//				short obs_y = this->GetPosition().Y + j;
+//
+//				if (people_y == obs_y && obs_v[j][obs_width - 1] != ' ') {
+//					return true;
+//				}
+//			}
+//		}
+//	}
+//
+//	return false;
+//}
+
 void Obstacle::SetPosition(short x, short y)
 {
 	mX = x;

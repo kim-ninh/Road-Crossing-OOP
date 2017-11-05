@@ -15,11 +15,12 @@
 #include "Dinosaur.h"
 #include "Menu.h"
 #include <stdlib.h>
+#include <filesystem>
 
 //test
 #include <ctime>
 using namespace std;
-
+using namespace std::experimental::filesystem;
 
 #define MAXIMUM 8		// maximum number of stacles per lane
 #define MINIMUM	2		// minimum number of stacles per lane
@@ -44,6 +45,7 @@ public:
 
 	bool IsExistFile(const char *fileName);
 	void PrintLevel();
+	vector<string> GetFileName(const char *path);
 public:
 	Game();
 	void DrawGame();

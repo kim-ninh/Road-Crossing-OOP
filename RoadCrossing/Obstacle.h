@@ -5,6 +5,7 @@
 #include <iostream>
 #include <mutex>
 #include "Figure.h"
+#include "People.h"
 
 using namespace std;
 

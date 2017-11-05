@@ -40,6 +40,24 @@ void Game::PrintLevel()
 	TextColor(BACKGROUND_BLACK | FOREGROUND_WHITE);
 }
 
+vector<string> Game::GetFileName(const char * path)
+{
+	vector<string> v;
+	std::experimental::filesystem::path p(path);
+
+	for (auto i = directory_iterator(p); i != directory_iterator(); i++)
+	{
+		if (!is_directory(i->path())) //we eliminate directories in a list
+		{
+			v.push_back(i->path().filename().string());
+		}
+		else
+			continue;
+	}
+
+	return v;
+}
+
 Game::Game()
 {
 	level = 1;
@@ -386,7 +404,7 @@ void Game::StartGame()
 	menu = Menu();
 	SetConsoleFontSize({ bigFontSizeW, bigFontSizeH }, L"Consolas");
 	FixConsoleWindow(CONSOLE_MENU_WIDTH, CONSOLE_MENU_HEIGHT);
-
+	ClearConsole();
 
 	while (true)
 	{
@@ -413,10 +431,10 @@ void Game::StartGame()
 		else if (select == "ABOUT") {
 			menu.AboutAnimation();
 
-			do
-			{
-				ch = _getch();
-			} while (ch != 27);
+			//do
+			//{
+			//	ch = _getch();
+			//} while (ch != 27);
 			ClearBoard();
 		}
 		else if (select == "LOAD GAME") {
@@ -432,11 +450,123 @@ void Game::StartGame()
 	}
 }
 
+//void Game::LoadGame()
+//{
+//	char fileName[50];
+//	int num;
+//	string path = "Saved\\";		// chứa đường dẫn tới file
+//	vector<string> v = GetFileName("Saved");
+//	vector<int> lvl;
+//	ifstream is;
+//
+//	if (!v.empty()) {
+//		lvl.resize(v.size());
+//
+//		for (int i = 0; i < v.size(); i++) {
+//			is.open((path + v[i]).c_str(), ios::binary);
+//			is.read((char*)&lvl[i], sizeof(int));
+//			is.close();
+//		}
+//	}
+//
+//	HANDLE ConsoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
+//	CONSOLE_SCREEN_BUFFER_INFO csbi;
+//	CONSOLE_CURSOR_INFO info;
+//
+//	GetConsoleScreenBufferInfo(ConsoleHandle, &csbi);		// lấy thông tin kích thước cửa sở và buffer của console
+//															// ở đây chỉ quan tâm kích thước cửa sổ
+//	int width = csbi.srWindow.Right - csbi.srWindow.Left + 1;
+//	/*int x = (width - strlen("Enter data's name: ")) / 2;*/
+//	int x = (width - strlen("Choose data: ")) / 2;
+//	int y = (csbi.srWindow.Bottom) / 3 - 5;
+//
+//	while (true)
+//	{
+//		GotoXY(x, y);
+//		/*printf("Enter data's name: ");*/
+//		printf("Choose data: ");
+//		
+//		GotoXY(x, y + 4);
+//		TextColor(BACKGROUND_BLACK | FOREGROUND_CYAN);
+//		printf("%-20s %-10s", "Name", "Level");
+//		TextColor(BACKGROUND_BLACK | FOREGROUND_WHITE);
+//		if (!v.empty()) {
+//			for (int i = 0; i < v.size(); i++) {
+//				GotoXY(x, y + 6 + i);
+//				printf("%-20s %-10d", v[i].c_str(), lvl[i]);
+//			}
+//		}
+//		
+//		/*GotoXY(x + strlen("Enter data's name: ") / 3, y + 1);*/
+//		GotoXY(x + strlen("Choose data: ") / 3, y + 1);
+//		// hiện con trỏ trước khi nhập
+//		info.dwSize = 100;
+//		info.bVisible = TRUE;
+//		SetConsoleCursorInfo(ConsoleHandle, &info);
+//
+//		TextColor(FOREGROUND_GREEN);
+//		cin.getline(fileName, 50);
+//		TextColor(FOREGROUND_WHITE);
+//
+//		// ẩn con trỏ sau khi nhập
+//		info.bVisible = FALSE;
+//		SetConsoleCursorInfo(ConsoleHandle, &info);
+//
+//
+//
+//		path += fileName;
+//		if (!IsExistFile(path.c_str())) {
+//			GotoXY((width - strlen("Data not found!")) / 2, y + 2);
+//			printf("Data not found!");
+//			Sleep(1000);
+//			string s(strlen("Data not found!"), ' ');
+//			GotoXY((width - strlen("Data not found!")) / 2, y + 2);
+//			printf("%s", s.c_str());
+//			s = string(strlen(fileName), ' ');
+//			GotoXY(x + strlen("Enter data's name: ") / 3, y + 1);
+//			printf("%s", s.c_str());
+//			path = "Saved\\";
+//		}
+//		else {
+//			break;
+//		}
+//	}
+//
+//	ifstream inFile(path, ios::binary);
+//
+//	inFile.read((char*)&level, sizeof(level));
+//	inFile.read((char*)&num, sizeof(num));
+//	lane.resize(num);
+//
+//	for (int i = 0; i < num; i++) {
+//		lane[i].Read(inFile);
+//	}
+//
+//	people.Read(inFile);
+//	menu.Read(inFile);
+//
+//	inFile.close();
+//	ClearConsole();
+//}
+
 void Game::LoadGame()
 {
 	char fileName[50];
 	int num;
 	string path = "Saved\\";		// chứa đường dẫn tới file
+	vector<string> v = GetFileName("Saved");
+	vector<int> lvl;
+	ifstream is;
+
+	if (!v.empty()) {
+		lvl.resize(v.size());
+
+		for (int i = 0; i < v.size(); i++) {
+			is.open((path + v[i]).c_str(), ios::binary);
+			is.read((char*)&lvl[i], sizeof(int));
+			is.close();
+		}
+	}
 
 	HANDLE ConsoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
 	CONSOLE_SCREEN_BUFFER_INFO csbi;
@@ -445,48 +575,61 @@ void Game::LoadGame()
 	GetConsoleScreenBufferInfo(ConsoleHandle, &csbi);		// lấy thông tin kích thước cửa sở và buffer của console
 															// ở đây chỉ quan tâm kích thước cửa sổ
 	int width = csbi.srWindow.Right - csbi.srWindow.Left + 1;
-	int x = (width - strlen("Enter data's name: ")) / 2;
+	int x = (width - strlen("Choose data")) / 2 - 5;
 	int y = (csbi.srWindow.Bottom) / 3 - 5;
 
-	while (true)
-	{
-		GotoXY(x, y);
-		printf("Enter data's name: ");
-		
-		GotoXY(x + strlen("Enter data's name: ") / 3, y + 1);
-		// hiện con trỏ trước khi nhập
-		info.dwSize = 100;
-		info.bVisible = TRUE;
-		SetConsoleCursorInfo(ConsoleHandle, &info);
+	GotoXY(x + 5, y);
+	printf("Choose data: ");
 
-		TextColor(FOREGROUND_GREEN);
-		cin.getline(fileName, 50);
-		TextColor(FOREGROUND_WHITE);
-
-		// ẩn con trỏ sau khi nhập
-		info.bVisible = FALSE;
-		SetConsoleCursorInfo(ConsoleHandle, &info);
-
-		path += fileName;
-		if (!IsExistFile(path.c_str())) {
-			GotoXY((width - strlen("Data not found!")) / 2, y + 2);
-			printf("Data not found!");
-			Sleep(1000);
-			string s(strlen("Data not found!"), ' ');
-			GotoXY((width - strlen("Data not found!")) / 2, y + 2);
-			printf("%s", s.c_str());
-			s = string(strlen(fileName), ' ');
-			GotoXY(x + strlen("Enter data's name: ") / 3, y + 1);
-			printf("%s", s.c_str());
-			path = "Saved\\";
+	GotoXY(x, y + 4);
+	TextColor(BACKGROUND_BLACK | FOREGROUND_CYAN);
+	printf("%-20s %-10s", "Name", "Level");
+	TextColor(BACKGROUND_BLACK | FOREGROUND_WHITE);
+	if (!v.empty()) {
+		for (int i = 0; i < v.size(); i++) {
+			GotoXY(x, y + 6 + i);
+			printf("%-20s %-10d", v[i].c_str(), lvl[i]);
 		}
-		else {
+	}
+	int x_sel = x - 2;
+	int y_sel = y + 6;
+
+	TextColor(BACKGROUND_BLACK | FOREGROUND_LIGHTCYAN);
+	GotoXY(x_sel, y_sel);
+	printf("%c", 175);
+	string select;
+
+	while (true) {
+		const char ch = toupper(_getch());
+		if (ch == 'W') {
+			if (y_sel > y + 6) {
+				GotoXY(x_sel, y_sel);
+				printf(" ");
+				y_sel--;
+				PlaySound("Sound\\sfx_menu_move4.wav", NULL, SND_ASYNC);
+			}
+		}
+		else if (ch == 'S') {
+			if (y_sel < y + 6 + v.size() - 1) {
+				GotoXY(x_sel, y_sel);
+				printf(" ");
+				y_sel++;
+				PlaySound("Sound\\sfx_menu_move4.wav", NULL, SND_ASYNC);
+			}
+		}
+		else if (ch == 13) {
+			path += v[y_sel - y - 6];
+			TextColor(BACKGROUND_BLACK | FOREGROUND_WHITE);
 			break;
 		}
+	
+		GotoXY(x_sel, y_sel);
+		printf("%c", 175);
 	}
 
 	ifstream inFile(path, ios::binary);
 
+	inFile.read((char*)&level, sizeof(level));
 	inFile.read((char*)&num, sizeof(num));
 	lane.resize(num);
 
@@ -495,7 +638,6 @@ void Game::LoadGame()
 	}
 
 	people.Read(inFile);
-	inFile.read((char*)&level, sizeof(level));
 	menu.Read(inFile);
 
 	inFile.close();
@@ -519,6 +661,32 @@ void Game::SaveGame()
 	width = csbi.srWindow.Right - csbi.srWindow.Left + 1;
 	pos.Y = (csbi.srWindow.Bottom) / 3 - 5;
 	pos.X = (width - strlen("File is already exist! Overwrite?")) / 2;
+
+
+	//vector<string> v = GetFileName("Saved");
+	//vector<int> lvl;
+	//ifstream is;
+
+	//if (!v.empty()) {
+	//	lvl.resize(v.size());
+
+	//	for (int i = 0; i < v.size(); i++) {
+	//		is.open((path + v[i]).c_str(), ios::binary);
+	//		is.read((char*)&lvl[i], sizeof(int));
+	//		is.close();
+	//	}
+	//}
+
+	//GotoXY(pos.X - 10, pos.Y + 10);
+	//TextColor(BACKGROUND_BLACK | FOREGROUND_CYAN);
+	//printf("%-20s %-10s", "Name", "Level");
+	//TextColor(BACKGROUND_BLACK | FOREGROUND_WHITE);
+	//if (!v.empty()) {
+	//	for (int i = 0; i < v.size(); i++) {
+	//		GotoXY(pos.X - 10, pos.Y +10 + i);
+	//		printf("%-20s %-10d", v[i].c_str(), lvl[i]);
+	//	}
+	//}
 
 	// kiểm tra trùng file.
 	while (true)
@@ -566,15 +734,16 @@ void Game::SaveGame()
 
 	// mở file và bắt đầu ghi
 	ofstream outFile(path, ios::binary);
-	num = lane.size();
 
+	outFile.write((char*)&level, sizeof(level));
+
+	num = lane.size();
 	outFile.write((char*)&num, sizeof(num));
 	for (int i = 0; i < num; i++) {
 		lane[i].Write(outFile);
 	}
 
 	people.Write(outFile);
-	outFile.write((char*)&level, sizeof(level));
 	menu.Write(outFile);
 
 	outFile.close();
@@ -700,7 +869,7 @@ void Game::ProcessDead()
 		}
 		else if (select == "MAIN MENU") {
 			Deallocate();
-
+			ClearConsole();
 			throw string("MAIN MENU");
 		}
 	}

@@ -205,6 +205,13 @@ void Menu::AboutAnimation()
 	TextColor(15);
 	while (true)
 	{
+		if (_kbhit())
+		{
+			char ch = toupper(_getch());
+			if (ch == 27)	//Mã ASCII của ESC : 27
+				return;
+		}
+
 		if (y + aboutSection.Height() == 0)
 			y = CONSOLE_H;
 		EraseAboutSection();
