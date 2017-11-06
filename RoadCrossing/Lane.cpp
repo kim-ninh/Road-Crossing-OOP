@@ -17,7 +17,7 @@ Lane::Lane(COORD coord, vector<Obstacle*> v, Direction theDirec, short SleepTime
 	soundWaiting = SoundWaiting;
 
 	if (v[0]->GetType() == CAR || v[0]->GetType() == TRUCK)
-		light = new TrafficLight(SleepTime);
+		light = new TrafficLight(SleepTime, rand() % 2);
 	else
 		light = nullptr;
 }

@@ -4,13 +4,13 @@ TrafficLight::TrafficLight()
 {
 }
 
-TrafficLight::TrafficLight(char sleep_time)
+TrafficLight::TrafficLight(char sleep_time, bool redLightBegin = false)
 {
-	countDown = RED_LIGHT_WAITING;
-	isRedLightActivated = false;
+	countDown = redLightBegin == false ? RED_LIGHT_WAITING : GREEN_LIGHT_WAITING;
+	isRedLightActivated = redLightBegin;
 	warningStatus = false;
 	countingTime = 0;
-	blink = false;
+	blinking = false;
 	Set(sleep_time);
 }
 
@@ -21,9 +21,6 @@ void TrafficLight::Set(char sleep_time)
 
 void TrafficLight::print(short x, short y)
 {
-	if (this->delayTime == 0)
-		return;
-
 	GotoXY(x, y);
 	if (isRedLightActivated == true)
 	{
@@ -31,7 +28,7 @@ void TrafficLight::print(short x, short y)
 			TextColor(BACKGROUND_LIGHTRED);
 		else
 		{
-			if (blink == true)
+			if (blinking == true)
 				TextColor(BACKGROUND_RED);
 			else
 				TextColor(BACKGROUND_LIGHTRED);
@@ -44,7 +41,7 @@ void TrafficLight::print(short x, short y)
 			TextColor(BACKGROUND_LIGHTGREEN);
 		else
 		{
-			if (blink == true)
+			if (blinking == true)
 				TextColor(BACKGROUND_GREEN);
 			else
 				TextColor(BACKGROUND_LIGHTGREEN);
@@ -56,35 +53,29 @@ void TrafficLight::print(short x, short y)
 
 void TrafficLight::updateTimeNum()
 {
-	if (countingTime == 1000 && countDown > 2000)
+	if (countingTime == ONE_SECOND && countDown > TIME_BLINKING)
 	{
+		countDown -= countingTime;
 		countingTime = 0;
-		countDown -= 1000;
 	}
 
-	if (countDown == 2000)
+	if (countDown == TIME_BLINKING)
 	{
 		warningStatus = true;
-		blink = true;
+		blinking = true;
 	}
 
-	if (countingTime == 500 && warningStatus == true)
+	if (countingTime == ONE_SECOND/2 && warningStatus == true)
 	{
+		countDown -= countingTime;
 		countingTime = 0;
-		countDown -= 500;
-		blink = !blink;
+		blinking = !blinking;
 	}
 
-	if (countDown == 0 && isRedLightActivated == false)
+	if (countDown == 0)
 	{
-		isRedLightActivated = true;
-		countDown = GREEN_LIGHT_WAITING;
-		warningStatus = false;
-	}
-	else if (countDown == 0 && isRedLightActivated == true)
-	{
-		isRedLightActivated = false;
-		countDown = RED_LIGHT_WAITING;
+		countDown = isRedLightActivated == true ? RED_LIGHT_WAITING : GREEN_LIGHT_WAITING;
+		isRedLightActivated = !isRedLightActivated;
 		warningStatus = false;
 	}
 
