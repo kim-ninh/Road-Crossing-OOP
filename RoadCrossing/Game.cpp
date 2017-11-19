@@ -234,11 +234,13 @@ void Game::Run()
 			ch = toupper(_getch());
 		}
 		else {
-			while (busy == true);
-			TerminateThread(t.native_handle(), 0);
-			t.join();
-			ClearConsole();
-			return StartGame();
+			while (busy == true) {}
+			if (people.IsDead()) {			// Main Menu
+				TerminateThread(t.native_handle(), 0);
+				t.join();
+				ClearConsole();
+				return StartGame();
+			}
 		}
 
 		if (ch == 'A' || ch == 'D' || ch == 'S' || ch == 'W') {
@@ -507,15 +509,15 @@ void Game::LoadGame()
 															// ở đây chỉ quan tâm kích thước cửa sổ
 	int width = csbi.srWindow.Right - csbi.srWindow.Left + 1;
 	/*int x = (width - strlen("Choose data")) / 2 - 5;*/
-	int x = (width - strlen("Choose data")) / 2 - 15;
+	int x = (width - 20 - 10 - 20) / 2;
 	int y = (csbi.srWindow.Bottom) / 3 - 5;
 
 
-	GotoXY(x + 16, y - 1);
+	GotoXY((width - strlen("LOAD GAME"))/2, y - 1);
 	TextColor(BACKGROUND_BLACK | FOREGROUND_YELLOW);
 	printf("LOAD GAME");
 	TextColor(BACKGROUND_BLACK | FOREGROUND_WHITE);
-	GotoXY(x + 15, y);
+	GotoXY((width - strlen("Choose data")) / 2, y);
 	printf("Choose data");
 
 	GotoXY(x, y + 4);
@@ -525,7 +527,7 @@ void Game::LoadGame()
 	if (!v.empty()) {
 		for (int i = 0; i < v.size(); i++) {
 			GotoXY(x, y + 6 + i);
-			printf("%-20s %-10d %d/%d/%d %d:%d:%d", v[i].c_str(), lvl[i],
+			printf("%-20s %-10d %02d/%02d/%02d %02d:%02d:%02d", v[i].c_str(), lvl[i],
 				time_info[i].tm_mday, time_info[i].tm_mon + 1, time_info[i].tm_year + 1900,
 				time_info[i].tm_hour, time_info[i].tm_min, time_info[i].tm_sec);
 		}
@@ -789,7 +791,7 @@ bool Game::IsImpact()
 
 void Game::ProcessDead()
 {
-	lock_guard<mutex> lock(theLock);
+	//lock_guard<mutex> lock(theLock);
 
 	PlaySound("Sound\\sfx_deathscream_human4.wav", NULL, SND_ASYNC);
 
@@ -801,8 +803,7 @@ void Game::ProcessDead()
 	FixConsoleWindow(CONSOLE_MENU_WIDTH, CONSOLE_MENU_HEIGHT);
 
 	menu.Set("lose");
-	char ch;
-
+	
 	while (true)
 	{
 		const string select = menu.Select();

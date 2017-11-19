@@ -85,29 +85,6 @@ void DrawBoard(void)
 		GotoXY({ BOARD_RIGHT_EDGE, i });
 		printf("%c", 186);
 	}
-
-
-	//for (int i = BOARD_GAME_TOP; i <= BOARD_GAME_BOTTOM; i++) {
-	//	GotoXY(WIDTH_OFFSET - 2, i);
-	//	printf("%d", i);
-	//	GotoXY(BOARD_GAME_RIGHT + 1, i);
-	//	printf("%d", i);
-	//}
-	//
-	//for (int i = BOARD_GAME_LEFT; i <= BOARD_GAME_RIGHT; i++) {
-	//	GotoXY(i, BOARD_GAME_TOP - 3);
-	//	printf("%d", i / 100);
-	//	GotoXY(i, BOARD_GAME_TOP - 2);
-	//	printf("%d", (i%100)/10);
-	//	GotoXY(i, BOARD_GAME_TOP - 1);
-	//	printf("%d", i % 10);
-	//	GotoXY(i, BOARD_GAME_BOTTOM + 1);
-	//	printf("%d", i/100);		
-	//	GotoXY(i, BOARD_GAME_BOTTOM + 2);
-	//	printf("%d", (i%100)/10);
-	//	GotoXY(i, BOARD_GAME_BOTTOM + 3);
-	//	printf("%d", i % 10);
-	//}
 }
 
 void GotoXY(int x, int y)

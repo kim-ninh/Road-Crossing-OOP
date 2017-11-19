@@ -115,7 +115,10 @@ void Menu::Control(char KEY)
 
 string Menu::Select()
 {
+	currentRow = 4;
+	pastRow = 3;
 	Print();
+
 	while (true)
 	{
 		char ch = toupper(_getch());
