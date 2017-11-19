@@ -97,11 +97,6 @@ void People::Move(char MOVING)
 	}
 }
 
-bool People::IsFinish()
-{
-	return false;
-}
-
 bool People::IsDead()
 {
 	return mStage == false;

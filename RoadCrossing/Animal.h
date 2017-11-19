@@ -4,7 +4,7 @@
 
 #include "Obstacle.h"
 
-class Animal : public Obstacle
+class Animal abstract : public Obstacle
 {
 public:
 	Animal();

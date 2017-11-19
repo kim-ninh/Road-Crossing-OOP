@@ -18,7 +18,7 @@
       <Field Name="figRight" />
     </ShowAsAssociation>
   </Class>
-  <Class Name="Car">
+  <Class Name="Car" Collapsed="true">
     <Position X="7.25" Y="4.5" Width="1.5" />
     <Compartments>
       <Compartment Name="Methods" Collapsed="true" />
@@ -56,20 +56,13 @@
       <FileName>Figure.h</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Frame" Collapsed="true">
-    <Position X="13.75" Y="6.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>BAAAAAAAAAAABgQAQAAAAIAAAAAAAAAAAAAAAAAAAAE=</HashCode>
-      <FileName>Frame.h</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="Game">
+  <Class Name="Game" Collapsed="true">
     <Position X="13.75" Y="1.25" Width="1.5" />
     <Compartments>
       <Compartment Name="Methods" Collapsed="true" />
     </Compartments>
     <TypeIdentifier>
-      <HashCode>AAACkBgAAAAYEBEAAAAAEBghBAmBQQAABgQCACEAAEM=</HashCode>
+      <HashCode>AAAGkBgAAAAYEBEAAAAAEBghRAmBQQAABgQCACEAAEM=</HashCode>
       <FileName>Game.h</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
@@ -83,7 +76,7 @@
       <Compartment Name="Methods" Collapsed="true" />
     </Compartments>
     <TypeIdentifier>
-      <HashCode>AIAAEAQCBAAAIBQASAAAAMggAAKAAAAECQAAAAEEAgA=</HashCode>
+      <HashCode>AIAAEAQABAAAIBQASAAAAMggAAKAAAAECQAAAAEEAgA=</HashCode>
       <FileName>Lane.h</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>

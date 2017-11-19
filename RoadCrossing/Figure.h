@@ -11,6 +11,7 @@
 #include "Console.h"
 #include <iostream>
 #include <mutex>
+#include <algorithm>
 
 using namespace std;
 
@@ -30,7 +31,6 @@ public:
 	vector<string>& Get();
 	void Print(COORD, bool edge = true);
 	void Print(int, int, bool edge = true);
-	void PrintIntro(COORD);
 	int Width();
 	int Height();
 	void Write(ostream&);

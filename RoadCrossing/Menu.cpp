@@ -146,26 +146,31 @@ void Menu::Print()
 		if (currentRow == rowIndex)
 		{
 			TextColor(14);
+			//TextColor(BACKGROUND_BLACK | FOREGROUND_YELLOW | FOREGROUND_WHITE);
 			printf(">%s<", str[rowIndex].c_str());
 		}
 		else if (pastRow == rowIndex && pastRow != 1)
 		{
 			TextColor(6);
+			//TextColor(BACKGROUND_BLACK | FOREGROUND_BROWN);
 			printf(" %s ", str[rowIndex].c_str());
 		}
 		else if (rowIndex == 1 || rowIndex == menuFig.Height() - 1 - 1)
 		{
 			TextColor(15);
+			//TextColor(BACKGROUND_BLACK | FOREGROUND_WHITE);
 			printf(" %s ", str[rowIndex].c_str());
 		}
 		else if (rowIndex == 0 || rowIndex == menuFig.Height() - 1)
 		{
 			TextColor(11);
+			//TextColor(BACKGROUND_BLACK | FOREGROUND_LIGHTCYAN);
 			printf(" %s ", str[rowIndex].c_str());
 		}
 		else
 		{
 			TextColor(6);
+			//TextColor(BACKGROUND_BLACK | FOREGROUND_BROWN);
 			printf(" %s ", str[rowIndex].c_str());
 		}
 	}

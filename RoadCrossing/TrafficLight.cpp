@@ -65,7 +65,7 @@ void TrafficLight::updateTimeNum()
 		blinking = true;
 	}
 
-	if (countingTime == ONE_SECOND/2 && warningStatus == true)
+	if (countingTime == ONE_SECOND / 2 && warningStatus == true)
 	{
 		countDown -= countingTime;
 		countingTime = 0;

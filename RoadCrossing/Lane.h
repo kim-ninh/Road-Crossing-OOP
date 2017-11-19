@@ -28,13 +28,12 @@ public:
 	int Height();
 	void UpdatePos();
 	void Print();
-	void Tell(People &);
-	COORD GetPos(People&);
+	void Tell(const People&);
 	COORD GetPos();
 	bool IsImpact(People& people);
 	void Write(ostream& outDev);
 	void Read(istream& inDev);
 	void Deallocate();
-	bool IsInside(People &);
+	bool IsInside(const People &);
 };
 #endif // !_LANE_H

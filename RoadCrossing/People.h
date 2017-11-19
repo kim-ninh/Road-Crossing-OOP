@@ -12,14 +12,14 @@ private:
 	bool mStage;		// true: sống, false: chết
 	static Figure fig;
 	vector<COORD> oldPos;
-public:
-	People(int x = 0, int y = 0);
+
 	void Up();
 	void Left();
 	void Right();
 	void Down();
+public:
+	People(int x = 0, int y = 0);
 	void Move(char);
-	bool IsFinish();
 	bool IsDead();
 	void Print();
 	void EraseOld();

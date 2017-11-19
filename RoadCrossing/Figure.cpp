@@ -60,7 +60,7 @@ void Figure::Print(COORD coord, bool edge)
 	Print(coord.X, coord.Y, edge);
 }
 
-void Figure::Print(int x, int y, bool edge)
+inline void Figure::Print(int x, int y, bool edge)
 {
 	if (edge) {
 		if (x > BOARD_GAME_LEFT) {
@@ -97,15 +97,6 @@ void Figure::Print(int x, int y, bool edge)
 			GotoXY(x, y + i);
 			printf("%s", str[i].c_str());
 		}
-	}
-}
-
-void Figure::PrintIntro(COORD pos)
-{
-	for (int i = 0; i < height; i++) {
-		GotoXY(pos.X, pos.Y + i);
-		printf("%s", str[i].c_str());
-		Sleep(100);
 	}
 }
 

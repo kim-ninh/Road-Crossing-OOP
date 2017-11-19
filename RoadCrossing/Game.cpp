@@ -1,7 +1,6 @@
 ﻿#pragma once
 #include "Game.h"
 
-bool Game::busy = false;
 
 bool Game::IsExistFile(const char* fileName)
 {
@@ -66,16 +65,12 @@ void Game::PrintMessage(string type)
 vector<string> Game::GetFileName(const char * path)
 {
 	vector<string> v;
-	std::experimental::filesystem::path p(path);
+	experimental::filesystem::path p(path);
 
 	for (auto i = directory_iterator(p); i != directory_iterator(); i++)
 	{
-		if (!is_directory(i->path())) //we eliminate directories in a list
-		{
+		if (!is_directory(i->path())) // eliminate directories in a list
 			v.push_back(i->path().filename().string());
-		}
-		else
-			continue;
 	}
 
 	return v;
@@ -90,20 +85,17 @@ void Game::DrawGame()
 {
 	int n = lane.size();
 
-	for (int i = 0; i < n; i++) {
-		lane[i].Print();
-	}
+	//for (int i = 0; i < n; i++) {
+	//	lane[i].Print();
+	//}
+
+	for_each(lane.begin(), lane.end(), mem_fn(&Lane::Print));
 
 	people.Print();
 }
 
 Game::~Game()
 {
-}
-
-People Game::GetPeople()
-{
-	return People();
 }
 
 void Game::Init()
@@ -145,7 +137,7 @@ void Game::Init()
 		{
 		case 1:
 			v.push_back(new Car(0, 0, direc));
-			for (int i = 1; i < n; i++) {
+			for (int j = 1; j < n; j++) {
 				obs = new Car(x, height + 1, direc);
 				v.push_back(obs);
 
@@ -165,7 +157,7 @@ void Game::Init()
 			n = 1 + (n - 1) * 2;
 			v.push_back(new Bird(0, 0, direc));
 
-			for (int i = 1; i < n; i++) {
+			for (int j = 1; j < n; j++) {
 				obs = new Bird(x, height + 1, direc);
 				v.push_back(obs);
 
@@ -184,7 +176,7 @@ void Game::Init()
 		case 3:
 			v.push_back(new Truck(0, 0, direc));
 
-			for (int i = 1; i < n; i++) {
+			for (int j = 1; j < n; j++) {
 				obs = new Truck(x, height + 1, direc);
 				v.push_back(obs);
 
@@ -203,7 +195,7 @@ void Game::Init()
 		case 4:
 			v.push_back(new Dinosaur(0, 0, direc));
 
-			for (int i = 1; i < n; i++) {
+			for (int j = 1; j < n; j++) {
 				obs = new Dinosaur(x, height + 1, direc);
 				v.push_back(obs);
 
@@ -228,6 +220,7 @@ void Game::Init()
 
 	people = People((BOARD_GAME_LEFT + BOARD_GAME_RIGHT) / 2, BOARD_GAME_BOTTOM - people.Height());
 	people.SetStage(true);
+	busy = false;
 }
 
 void Game::Run()
@@ -241,6 +234,7 @@ void Game::Run()
 			ch = toupper(_getch());
 		}
 		else {
+			while (busy == true);
 			TerminateThread(t.native_handle(), 0);
 			t.join();
 			ClearConsole();
@@ -271,22 +265,24 @@ void Game::Run()
 				}
 			}
 		}
+
+		ch = ' ';
 	}
 }
 
 void Game::ThreadFunct()
 {
-	COORD pos;
 	while (true) {
 
 		UpdatePosObstacle();
 		busy = true;
+
 		lock_guard<mutex> *lock = new lock_guard<mutex>(theLock);
 		PrintSeparator();
 		PrintObstacle();
 		TellObstacle();
 		delete lock;
-		busy = false;
+
 		if (IsImpact()) {
 			people.SetStage(false);
 
@@ -297,9 +293,11 @@ void Game::ThreadFunct()
 			catch (string s)
 			{
 				if (s == "MAIN MENU");
+				busy = false;
 				return;
 			}
 		}
+		busy = false;
 
 		Sleep(SLEEP_TIME);
 	}
@@ -331,12 +329,7 @@ void Game::PauseGame()
 		menu.EraseMenu();
 
 		if (select == "CONTINUE") {
-			PlaySound("Sound\\sfx_sounds_pause4_out.wav", NULL, SND_ASYNC);
-			SetConsoleFontSize({ smallFontSizeW, smallFontSizeH }, L"Lucida Console");
-			FixConsoleWindow(CONSOLE_MAX_WIDTH, CONSOLE_MAX_HEIGHT);
-			DrawBoard();
-			PrintPeople();
-			ResumeThread(t.native_handle());
+			ResumeGame();
 			break;
 		}
 		else if (select == "SAVE GAME") {
@@ -436,6 +429,7 @@ void Game::StartGame()
 		if (select == "NEW GAME") {
 			SetConsoleFontSize({ smallFontSizeW,smallFontSizeH }, L"Lucida Console");
 			FixConsoleWindow(CONSOLE_MAX_WIDTH, CONSOLE_MAX_HEIGHT);
+			level = 1;
 			PrintLevel();
 			DrawBoard();
 			Init();
@@ -467,104 +461,21 @@ void Game::StartGame()
 	}
 }
 
-//void Game::LoadGame()
-//{
-//	char fileName[50];
-//	int num;
-//	string path = "Saved\\";		// chứa đường dẫn tới file
-//	vector<string> v = GetFileName("Saved");
-//	vector<int> lvl;
-//	ifstream is;
-//
-//	if (!v.empty()) {
-//		lvl.resize(v.size());
-//
-//		for (int i = 0; i < v.size(); i++) {
-//			is.open((path + v[i]).c_str(), ios::binary);
-//			is.read((char*)&lvl[i], sizeof(int));
-//			is.close();
-//		}
-//	}
-//
-//	HANDLE ConsoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
-//	CONSOLE_SCREEN_BUFFER_INFO csbi;
-//	CONSOLE_CURSOR_INFO info;
-//
-//	GetConsoleScreenBufferInfo(ConsoleHandle, &csbi);		// lấy thông tin kích thước cửa sở và buffer của console
-//															// ở đây chỉ quan tâm kích thước cửa sổ
-//	int width = csbi.srWindow.Right - csbi.srWindow.Left + 1;
-//	/*int x = (width - strlen("Enter data's name: ")) / 2;*/
-//	int x = (width - strlen("Choose data: ")) / 2;
-//	int y = (csbi.srWindow.Bottom) / 3 - 5;
-//
-//	while (true)
-//	{
-//		GotoXY(x, y);
-//		/*printf("Enter data's name: ");*/
-//		printf("Choose data: ");
-//		
-//		GotoXY(x, y + 4);
-//		TextColor(BACKGROUND_BLACK | FOREGROUND_CYAN);
-//		printf("%-20s %-10s", "Name", "Level");
-//		TextColor(BACKGROUND_BLACK | FOREGROUND_WHITE);
-//		if (!v.empty()) {
-//			for (int i = 0; i < v.size(); i++) {
-//				GotoXY(x, y + 6 + i);
-//				printf("%-20s %-10d", v[i].c_str(), lvl[i]);
-//			}
-//		}
-//		
-//		/*GotoXY(x + strlen("Enter data's name: ") / 3, y + 1);*/
-//		GotoXY(x + strlen("Choose data: ") / 3, y + 1);
-//		// hiện con trỏ trước khi nhập
-//		info.dwSize = 100;
-//		info.bVisible = TRUE;
-//		SetConsoleCursorInfo(ConsoleHandle, &info);
-//
-//		TextColor(FOREGROUND_GREEN);
-//		cin.getline(fileName, 50);
-//		TextColor(FOREGROUND_WHITE);
-//
-//		// ẩn con trỏ sau khi nhập
-//		info.bVisible = FALSE;
-//		SetConsoleCursorInfo(ConsoleHandle, &info);
-//
-//
-//
-//		path += fileName;
-//		if (!IsExistFile(path.c_str())) {
-//			GotoXY((width - strlen("Data not found!")) / 2, y + 2);
-//			printf("Data not found!");
-//			Sleep(1000);
-//			string s(strlen("Data not found!"), ' ');
-//			GotoXY((width - strlen("Data not found!")) / 2, y + 2);
-//			printf("%s", s.c_str());
-//			s = string(strlen(fileName), ' ');
-//			GotoXY(x + strlen("Enter data's name: ") / 3, y + 1);
-//			printf("%s", s.c_str());
-//			path = "Saved\\";
-//		}
-//		else {
-//			break;
-//		}
-//	}
-//
-//	ifstream inFile(path, ios::binary);
-//
-//	inFile.read((char*)&level, sizeof(level));
-//	inFile.read((char*)&num, sizeof(num));
-//	lane.resize(num);
-//
-//	for (int i = 0; i < num; i++) {
-//		lane[i].Read(inFile);
-//	}
-//
-//	people.Read(inFile);
-//	menu.Read(inFile);
-//
-//	inFile.close();
-//	ClearConsole();
-//}
+/**
+ * Phương thức load dữ liệu cho game.\n
+ * 
+ * Đọc thông tin từ file theo mode nhị phân.\n
+ * 
+ * Lúc bắt đầu, phương thức sẽ đọc thông tin thư mục lưu game, lấy tất cả tên file save có trong thư mục.
+ * Sau đó, với mỗi tên file, phương thức sẽ đọc thông tin level của file save đó (đọc 4 byte đầu) rồi hiển thị
+ * tất cả tên data save + level tương ứng ra console, người chơi chỉ việc chọn 1 trong số những data đó,
+ * tránh được trường hợp người chơi không nhớ tên data.\n
+ * 
+ * Sau khi người chơi chọn data, phương thức sẽ đọc thông tin từ file lưu đó theo cấu trúc lúc lưu file.
+ * (các thông tin cân đọc chính là thuộc tính của lớp Game).
+ * Đối với những lớp thuộc tính mà dữ liệu có chứa con trỏ, do không thể đọc trực tiếp được nên
+ * phải cài đặt thêm phương thức đọc ở các lớp của thuộc tính đó.\n
+ */
 
 void Game::LoadGame()
 {
@@ -573,14 +484,17 @@ void Game::LoadGame()
 	string path = "Saved\\";		// chứa đường dẫn tới file
 	vector<string> v = GetFileName("Saved");
 	vector<int> lvl;
+	vector<tm> time_info;
 	ifstream is;
 
 	if (!v.empty()) {
 		lvl.resize(v.size());
+		time_info.resize(v.size());
 
 		for (int i = 0; i < v.size(); i++) {
 			is.open((path + v[i]).c_str(), ios::binary);
 			is.read((char*)&lvl[i], sizeof(int));
+			is.read((char*)&time_info[i], sizeof(tm));
 			is.close();
 		}
 	}
@@ -592,20 +506,28 @@ void Game::LoadGame()
 	GetConsoleScreenBufferInfo(ConsoleHandle, &csbi);		// lấy thông tin kích thước cửa sở và buffer của console
 															// ở đây chỉ quan tâm kích thước cửa sổ
 	int width = csbi.srWindow.Right - csbi.srWindow.Left + 1;
-	int x = (width - strlen("Choose data")) / 2 - 5;
+	/*int x = (width - strlen("Choose data")) / 2 - 5;*/
+	int x = (width - strlen("Choose data")) / 2 - 15;
 	int y = (csbi.srWindow.Bottom) / 3 - 5;
 
-	GotoXY(x + 5, y);
-	printf("Choose data: ");
+
+	GotoXY(x + 16, y - 1);
+	TextColor(BACKGROUND_BLACK | FOREGROUND_YELLOW);
+	printf("LOAD GAME");
+	TextColor(BACKGROUND_BLACK | FOREGROUND_WHITE);
+	GotoXY(x + 15, y);
+	printf("Choose data");
 
 	GotoXY(x, y + 4);
 	TextColor(BACKGROUND_BLACK | FOREGROUND_CYAN);
-	printf("%-20s %-10s", "Name", "Level");
+	printf("%-20s %-10s %-20s", "Name", "Level", "Date");
 	TextColor(BACKGROUND_BLACK | FOREGROUND_WHITE);
 	if (!v.empty()) {
 		for (int i = 0; i < v.size(); i++) {
 			GotoXY(x, y + 6 + i);
-			printf("%-20s %-10d", v[i].c_str(), lvl[i]);
+			printf("%-20s %-10d %d/%d/%d %d:%d:%d", v[i].c_str(), lvl[i],
+				time_info[i].tm_mday, time_info[i].tm_mon + 1, time_info[i].tm_year + 1900,
+				time_info[i].tm_hour, time_info[i].tm_min, time_info[i].tm_sec);
 		}
 	}
 	int x_sel = x - 2;
@@ -644,9 +566,11 @@ void Game::LoadGame()
 		printf("%c", 175);
 	}
 
+	tm tm1;
 	ifstream inFile(path, ios::binary);
 
 	inFile.read((char*)&level, sizeof(level));
+	inFile.read((char*)&tm1, sizeof(tm));
 	inFile.read((char*)&num, sizeof(num));
 	lane.resize(num);
 
@@ -656,68 +580,69 @@ void Game::LoadGame()
 
 	people.Read(inFile);
 	menu.Read(inFile);
+	inFile.read((char*)&busy, sizeof(busy));
 
 	inFile.close();
 	ClearConsole();
 }
 
+/**
+ * Phương thức lưu dữ liện của game hiện tại vào file.\n
+ * 
+ * Ghi theo mode nhị phân (để dễ dàng và người chơi không thể tự ý
+ * thay đổi được thông tin của file save).\n
+ * 
+ * Game sẽ yêu cầu người chơi nhập tên để lưu, sau đó game tiến hành kiểm tra tên vừa nhập
+ * đã có tồn tại từ trước hay chưa, nếu chưa thì bắt đầu mở file và ghi, nếu đã tồn tại, game sẽ hỏi
+ * người chơi muốn ghi đè (xóa file cũ) không, nếu đồng ý ghi đè thì tiến hành mở file và ghi thông tin,
+ * nếu không thì người chơi sẽ nhập tên khác.\n
+ * 
+ * Các thông tin được ghi vào file là các thuộc tính của đối tượng game hiện tại
+ * được ghi theo thứ tự từ trên xuống.\n
+ * 
+ * Riêng thuộc tính level được ưu tiên ghi đầu tiên để khi load game, có thể
+ * dễ dàng lấy được thông tin level của file save (chỉ cần đọc 4 byte đầu)
+ * sau đó hiện thị ra để người chơi dễ phân biệt và lựa chọn.\n
+ *		
+ * Các thuộc tính mà dữ liệu của nó có chứa con trỏ vì không ghi trực tiếp được
+ * nên sẽ được đĩnh nghĩa phương thức ghi cụ thể và được gọi trong phương thức SaveGame().\n
+ */
 void Game::SaveGame()
 {
-	char fileName[51];
-	int num, width;
-	Menu m;
-	string path = "Saved\\";
 
+	char fileName[51];
+	Menu m;
+	string path = "Saved\\";		// chứa đường dẫn tới file
+
+	// lấy thông số hiện tại của console (chiều rộng, cao của cửa sổ), nhằm canh lề cho các đoạn text sắp được in ra
 	HANDLE ConsoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
 	CONSOLE_CURSOR_INFO info;
 
 	SMALL_RECT rect = GetWindowSize();
-	width = rect.Right - rect.Left + 1;
+	int width = rect.Right - rect.Left + 1;
 	COORD pos;
-	pos.Y = (rect.Bottom) / 3 - 5;
-	pos.X = (width - strlen("File is already exist! Overwrite?")) / 2;
-
-
-	//vector<string> v = GetFileName("Saved");
-	//vector<int> lvl;
-	//ifstream is;
-
-	//if (!v.empty()) {
-	//	lvl.resize(v.size());
-
-	//	for (int i = 0; i < v.size(); i++) {
-	//		is.open((path + v[i]).c_str(), ios::binary);
-	//		is.read((char*)&lvl[i], sizeof(int));
-	//		is.close();
-	//	}
-	//}
-
-	//GotoXY(pos.X - 10, pos.Y + 10);
-	//TextColor(BACKGROUND_BLACK | FOREGROUND_CYAN);
-	//printf("%-20s %-10s", "Name", "Level");
-	//TextColor(BACKGROUND_BLACK | FOREGROUND_WHITE);
-	//if (!v.empty()) {
-	//	for (int i = 0; i < v.size(); i++) {
-	//		GotoXY(pos.X - 10, pos.Y +10 + i);
-	//		printf("%-20s %-10d", v[i].c_str(), lvl[i]);
-	//	}
-	//}
+	pos.Y = (rect.Bottom) / 3 - 4;
+	pos.X = (width - strlen("File already exists! Overwrite?")) / 2;
 
 	// kiểm tra trùng file.
 	while (true)
 	{
-		GotoXY(pos.X + strlen("File is already exist! Overwrite?") / 4, pos.Y);
+		GotoXY((width - strlen("Save Game")) / 2, pos.Y - 2);
+		TextColor(BACKGROUND_BLACK | FOREGROUND_YELLOW);
+		printf("Save Game");
+		TextColor(BACKGROUND_BLACK | FOREGROUND_WHITE);
+		GotoXY(pos.X + strlen("File already exists! Overwrite?") / 4, pos.Y);
 		printf("Input name to save: ");
-		GotoXY(pos.X + strlen("File is already exist! Overwrite?") / 3, pos.Y + 1);
+		GotoXY(pos.X + strlen("File already exists! Overwrite?") / 3, pos.Y + 1);
 
 		// hiện con trỏ trước khi nhập
 		info.dwSize = 100;
 		info.bVisible = TRUE;					
 		SetConsoleCursorInfo(ConsoleHandle, &info);
 
-		TextColor(FOREGROUND_GREEN);
+		TextColor(BACKGROUND_BLACK | FOREGROUND_GREEN);
 		cin.getline(fileName, 50);
-		TextColor(FOREGROUND_WHITE);
+		TextColor(BACKGROUND_BLACK | FOREGROUND_WHITE);
 
 		// ẩn con trỏ sau khi nhập
 		info.bVisible = FALSE;
@@ -726,13 +651,14 @@ void Game::SaveGame()
 		path += fileName;
 		if (IsExistFile(path.c_str()))		// file đã tồn tại
 		{
-			int x = (width - strlen("File is already exist! Overwrite?")) / 2;
+			int x = (width - strlen("File already exists! Overwrite?")) / 2;
 			GotoXY(x, pos.Y + 2);
-			printf("File is already exist! Overwrite?");
+			printf("File already exists! Overwrite?");
 			m.Set("yes_no");
 			string select = m.Select();
 
 			if (select == "YES") {
+				m.Erase();
 				break;
 			}
 			else {
@@ -744,15 +670,17 @@ void Game::SaveGame()
 			break;
 	}
 
-
-	m.Erase();		// xóa menu
+	time_t current_time;
+	time(&current_time);
+	tm * time_info = localtime(&current_time);
 
 	// mở file và bắt đầu ghi
 	ofstream outFile(path, ios::binary);
 
 	outFile.write((char*)&level, sizeof(level));
+	outFile.write((char*)time_info, sizeof(tm));
 
-	num = lane.size();
+	int num = lane.size();
 	outFile.write((char*)&num, sizeof(num));
 	for (int i = 0; i < num; i++) {
 		lane[i].Write(outFile);
@@ -760,13 +688,14 @@ void Game::SaveGame()
 
 	people.Write(outFile);
 	menu.Write(outFile);
+	outFile.write((char*)&busy, sizeof(busy));
 
 	outFile.close();
 
 	// thông báo đã lưu thành công
-	GotoXY((width - strlen("Saved!")) / 2, pos.Y + 5);
+	GotoXY((width - strlen("Saved!")) / 2, pos.Y + 6);
 	printf("Saved!");
-	GotoXY((width - strlen("Press 'Enter' key to go back to the Main Menu"))/2, pos.Y + 6);
+	GotoXY((width - strlen("Press 'Enter' key to go back to the Main Menu"))/2, pos.Y + 7);
 	printf("Press 'Enter' key to go back to the Main Menu");
 	
 	while (_getch() != 13);		// chờ nhấn Enter
@@ -775,7 +704,7 @@ void Game::SaveGame()
 
 bool Game::IsLevelUp()
 {
-	short people_bot = people.GetPosition().Y + people.Height() - 1;
+	const short people_bot = people.GetPosition().Y + people.Height() - 1;
 
 	return people_bot < HEIGHT_OFFSET + 1 + SIDE_WALK_HEIGHT;
 }
@@ -794,15 +723,23 @@ void Game::LevelUp()
 	ResumeThread(t.native_handle());
 }
 
-void Game::PauseGame(HANDLE)
+/**
+ * Phương thức tiếp tục game khi đang tạm dừng.\n
+ * 
+ * Các thao tác cài đặt: phát âm thanh, điều chỉnh lại font chữ của console,
+ * thay đổi kích thước cửa sổ của console, vẽ lại game và resume lại thread.
+ */
+void Game::ResumeGame()
 {
+	PlaySound("Sound\\sfx_sounds_pause4_out.wav", NULL, SND_ASYNC);
+	SetConsoleFontSize({ smallFontSizeW, smallFontSizeH }, L"Lucida Console");
+	FixConsoleWindow(CONSOLE_MAX_WIDTH, CONSOLE_MAX_HEIGHT);
+	DrawBoard();
+	PrintPeople();
+	ResumeThread(t.native_handle());
 }
 
-void Game::ResumeGame(HANDLE)
-{
-}
-
-void Game::UpdatePosPeople(char MOVING)
+void Game::UpdatePosPeople(const char MOVING)
 {
 	people.Move(MOVING);
 }
@@ -852,9 +789,7 @@ bool Game::IsImpact()
 
 void Game::ProcessDead()
 {
-
-	const clock_t begin = clock();
-	const int delay_time = 1;
+	lock_guard<mutex> lock(theLock);
 
 	PlaySound("Sound\\sfx_deathscream_human4.wav", NULL, SND_ASYNC);
 
@@ -867,11 +802,10 @@ void Game::ProcessDead()
 
 	menu.Set("lose");
 	char ch;
-	string select;
 
 	while (true)
 	{
-		select = menu.Select();
+		const string select = menu.Select();
 		menu.EraseMenu();
 
 		if (select == "RESTART") {
@@ -885,7 +819,8 @@ void Game::ProcessDead()
 			PrintPeople();
 			return;
 		}
-		else if (select == "MAIN MENU") {
+		
+		if (select == "MAIN MENU") {
 			Deallocate();
 			ClearConsole();
 			throw string("MAIN MENU");
@@ -895,12 +830,13 @@ void Game::ProcessDead()
 
 void Game::PrintObstacle()
 {
-	int n = lane.size();
+	//int n = lane.size();
 
-	for (int i = 0; i < n; i++) {
-		lane[i].Print();
-	}
+	//for (int i = 0; i < n; i++) {
+	//	lane[i].Print();
+	//}
 
+	for_each(lane.begin(), lane.end(), mem_fn(&Lane::Print));		// chuyển thành functor để tăng hiệu suất
 }
 
 void Game::PrintPeople()
@@ -972,16 +908,6 @@ void Game::PrintSeparator()
 
 void Game::ClearBoard() const
 {
-	//string s;
-	//for (int i = BOARD_LEFT_EDGE; i <= BOARD_RIGHT_EDGE; i++) {
-	//	s += ' ';
-	//}
-
-	//for (int i = BOARD_TOP_EDGE; i <= BOARD_BOTTOM_EDGE; i++) {
-	//	GotoXY(BOARD_LEFT_EDGE, i);
-	//	printf("%s", s.c_str());
-	//}
-
 	string s(BOARD_GAME_RIGHT - BOARD_GAME_LEFT + 1, ' ');		// constructor with duplicate a character n times
 
 	for (int i = BOARD_GAME_TOP; i <= BOARD_GAME_BOTTOM; i++) {
@@ -1003,7 +929,10 @@ void Game::Deallocate()
 void Game::TellObstacle()
 {
 	int n = lane.size();
+	
+	//for (int i = 0; i < n; i++)
+	//	lane[i].Tell(people);
 
-	for (int i = 0; i < n; i++)
-		lane[i].Tell(people);
+	// chuyển thành functor để tăng hiệu suất
+	for_each(lane.begin(), lane.end(), bind(mem_fn(&Lane::Tell), std::placeholders::_1, people));
 }

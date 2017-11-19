@@ -1,4 +1,5 @@
 ﻿#pragma once
+#define _CRT_SECURE_NO_WARNINGS
 #ifndef _GAME_H
 #define _GAME_H
 
@@ -8,7 +9,6 @@
 #include <conio.h>
 #include "People.h"
 #include "Lane.h"
-#include <ctime>
 #include "Car.h"
 #include "Truck.h"
 #include "Bird.h"
@@ -37,14 +37,14 @@ using namespace std::experimental::filesystem;
 
 class Game
 {
-public:
+private:
 	vector<Lane> lane;
 	People people;
 	int level;
 	Menu menu;
 	thread t;
 	
-	static bool busy;
+	bool busy;
 	bool IsExistFile(const char *fileName);
 	void PrintLevel();
 	void PrintMessage(string);
@@ -53,7 +53,6 @@ public:
 	Game();
 	void DrawGame();
 	~Game();
-	People GetPeople();
 	void Init();
 	void Run();
 	void ThreadFunct();
@@ -65,9 +64,8 @@ public:
 	void SaveGame();
 	bool IsLevelUp();
 	void LevelUp();
-	void PauseGame(HANDLE);
-	void ResumeGame(HANDLE);
-	void UpdatePosPeople(char MOVING);
+	void ResumeGame();
+	void UpdatePosPeople(const char MOVING);
 	void UpdatePosObstacle();
 	bool IsImpact();
 	void ProcessDead();

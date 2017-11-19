@@ -6,6 +6,8 @@
 #include <mutex>
 #include "Figure.h"
 #include "People.h"
+#include <functional>
+#include <algorithm>
 
 using namespace std;
 
@@ -19,7 +21,7 @@ enum ObstacleType {
 
 class Lane;
 
-class Obstacle
+class Obstacle abstract
 {
 	friend class Lane;
 private:

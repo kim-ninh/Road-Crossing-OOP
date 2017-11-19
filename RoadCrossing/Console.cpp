@@ -50,6 +50,7 @@ BOOL SetConsoleFontSize(COORD dwFontSize, const wchar_t *fontName) {
 
 void DrawBoard(void)
 {
+	TextColor(BACKGROUND_BLACK | FOREGROUND_WHITE);
 	GotoXY({ BOARD_LEFT_EDGE, BOARD_TOP_EDGE });		// Góc trên bên trái
 	printf("%c", 201);
 	GotoXY({ BOARD_RIGHT_EDGE, BOARD_TOP_EDGE });		// Góc trên bên phải

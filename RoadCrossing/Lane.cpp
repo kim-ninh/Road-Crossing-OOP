@@ -49,9 +49,11 @@ void Lane::UpdatePos()
 	}
 
 	//đèn xanh thì phương tiện di chuyển
-	for (int i = 0; i < n; i++) {
-		obs[i]->Move();
-	}
+	//for (int i = 0; i < n; i++) {
+	//	obs[i]->Move();
+	//}
+
+	for_each(obs.begin(), obs.end(), mem_fun(&Obstacle::Move));
 }
 
 void Lane::Print()
@@ -70,9 +72,11 @@ void Lane::Print()
 
 				obs[0]->SetPosition(BOARD_GAME_LEFT - (BOARD_GAME_RIGHT - obs_left), obs[1]->GetPosition().Y);
 
-				for (int i = 0; i < n; i++) {
-					obs[i]->Print();
-				}
+				//for (int i = 0; i < n; i++) {
+				//	obs[i]->Print();
+				//}
+				
+				for_each(obs.begin(), obs.end(), mem_fn(&Obstacle::Print));
 
 				return;
 			}
@@ -80,9 +84,11 @@ void Lane::Print()
 
 		obs[0]->SetPosition(0, 0);
 
-		for (int i = 1; i < n; i++) {
-			obs[i]->Print();
-		}
+		//for (int i = 1; i < n; i++) {
+		//	obs[i]->Print();
+		//}
+
+		for_each(obs.begin() + 1, obs.end(), mem_fn(&Obstacle::Print));
 	}
 	else {
 		if (light != nullptr)
@@ -96,9 +102,11 @@ void Lane::Print()
 
 				obs[0]->SetPosition(BOARD_GAME_RIGHT - (BOARD_GAME_LEFT - obs_left), obs[1]->GetPosition().Y);
 
-				for (int i = 0; i < n; i++) {
-					obs[i]->Print();
-				}
+				//for (int i = 0; i < n; i++) {
+				//	obs[i]->Print();
+				//}
+
+				for_each(obs.begin(), obs.end(), mem_fn(&Obstacle::Print));
 
 				return;
 			}
@@ -106,13 +114,15 @@ void Lane::Print()
 
 		obs[0]->SetPosition(0, 0);
 
-		for (int i = 1; i < n; i++) {
-			obs[i]->Print();
-		}
+		//for (int i = 1; i < n; i++) {
+		//	obs[i]->Print();
+		//}
+
+		for_each(obs.begin() + 1, obs.end(), mem_fn(&Obstacle::Print));
 	}
 }
 
-void Lane::Tell(People &people)
+void Lane::Tell(const People &people)
 {
 	if (IsInside(people) == false)
 		return;
@@ -259,9 +269,9 @@ void Lane::Deallocate()
 	delete light;
 	light = nullptr;
 }
-bool Lane::IsInside(People & people)
+bool Lane::IsInside(const People & people)
 {
-	COORD peoplePos = people.GetPosition();
+	COORD peoplePos = (const_cast<People&>(people)).GetPosition();
 	if (pos.Y <= peoplePos.Y && peoplePos.Y < pos.Y + height)
 		return true;
 	return false;
